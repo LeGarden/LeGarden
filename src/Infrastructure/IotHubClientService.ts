@@ -1,5 +1,6 @@
 import { Client, Message } from "azure-iot-device";
 import { Mqtt } from 'azure-iot-device-mqtt';
+import { IAction } from "../Domain/IAction";
 import { IClientService } from "./IClientService";
 
 export class IotHubClientService implements IClientService {
@@ -47,6 +48,10 @@ export class IotHubClientService implements IClientService {
     private onMessage(message: Message): void {
         // tslint:disable-next-line:no-console
         console.log('Id: ' + message.messageId + ' Body: ' + message.data);
+        const actionData: IAction = message.data;
+
+        // ToDo: call ruleEngine
+
         this.client.complete(message, this.onResult);
     };
 
