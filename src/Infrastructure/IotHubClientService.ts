@@ -22,7 +22,7 @@ export class IotHubClientService implements IClientService {
 
     public sendEvent(data: any): void {
         const message = new Message(data);
-        this.client.sendEvent(message, this.onResult)
+        this.client.sendEvent(message, this.onResult);
     }
 
     private onConnect(err: any): void {
