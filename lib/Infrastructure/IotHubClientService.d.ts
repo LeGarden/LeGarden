@@ -1,4 +1,4 @@
-import { IClientService } from "./IClientService";
+import { IClientService } from './IClientService';
 export declare class IotHubClientService implements IClientService {
     connected: boolean;
     private connectionString;
