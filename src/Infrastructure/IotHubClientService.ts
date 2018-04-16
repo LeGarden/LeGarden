@@ -14,16 +14,16 @@ export class IotHubClientService implements IClientService {
   }
 
   public connect(): void {
-    this.client.open(this.onConnect);
+    this.client.open(this.onConnect.bind(this));
   }
 
   public disconnect(): void {
-    this.client.close(this.onResult);
+    this.client.close(this.onResult.bind(this));
   }
 
   public sendEvent(data: any): void {
     const message = new Message(data);
-    this.client.sendEvent(message, this.onResult);
+    this.client.sendEvent(message, this.onResult.bind(this));
   }
 
   private onConnect(err: any): void {
@@ -34,9 +34,9 @@ export class IotHubClientService implements IClientService {
       // tslint:disable-next-line:no-console
       console.log('Client connected');
       this.connected = true;
-      this.client.on('message', this.onMessage);
-      this.client.on('error', this.onError);
-      this.client.on('disconnect', this.onDisconnect);
+      this.client.on('message', this.onMessage.bind(this));
+      this.client.on('error', this.onError.bind(this));
+      this.client.on('disconnect', this.onDisconnect.bind(this));
     }
   }
 
@@ -52,21 +52,21 @@ export class IotHubClientService implements IClientService {
 
     // ToDo: call ruleEngine
 
-    this.client.complete(message, this.onResult);
+    this.client.complete(message, this.onResult.bind(this));
   }
 
   private onDisconnect(): void {
     this.connected = false;
     this.client.removeAllListeners();
-    this.client.open(this.onConnect);
+    this.client.open(this.onConnect.bind(this));
   }
 
   private onResult(err: any, result: any): void {
-    if (err !== undefined) {
+    if (err) {
       // tslint:disable-next-line:no-console
       console.error('error: ' + err.toString());
     }
-    if (result !== undefined) {
+    if (result) {
       // tslint:disable-next-line:no-console
       console.log('result: ' + result.constructor.name);
     }
