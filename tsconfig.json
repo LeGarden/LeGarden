@@ -1,12 +1,13 @@
 {
   "compilerOptions": {
     "declaration": true,
+    "target": "es5",
+    "lib": ["es6"],
+    "types": ["reflect-metadata"],
     "module": "commonjs",
     "moduleResolution": "node",
-    "lib": [
-      "esnext"
-    ],
-    "target": "es3",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "strict": true,
     "outDir": "./lib",
     "preserveConstEnums": true,
