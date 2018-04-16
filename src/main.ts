@@ -1,8 +1,8 @@
+import * as keys from '../src/keys.json';
 import { IClientService } from './Infrastructure/IClientService';
 import { IotHubClientService } from './Infrastructure/IotHubClientService';
 
-const connectionString =
-  'HostName=LeGardenHub.azure-devices.net;DeviceId=raspi@legarden;SharedAccessKey=5XXrfzqV9LKrVSY2tuF3eUPImjXkbjAqL3/wbOK6cx4=';
+const connectionString = (keys as any).iotHubConnectionstring;
 const client: IClientService = new IotHubClientService(connectionString);
 
 const sendInterval = setInterval(() => {
