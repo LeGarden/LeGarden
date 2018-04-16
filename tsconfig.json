@@ -4,7 +4,7 @@
     "target": "es5",
     "lib": ["es6"],
     "types": ["reflect-metadata"],
-    "module": "system",
+    "module": "commonjs",
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
@@ -16,7 +16,7 @@
     "typeRoots": [
       "./node_modules/@types"
     ],
-    "outFile": "lib/main.js"
+    // "outFile": "lib/main.js"
   },
   "include": [
     "src/**/*"
