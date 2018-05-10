@@ -1,4 +1,4 @@
-import * as keys from '../src/keys.json';
+import * as keys from '../keys.json';
 import { IClientService } from './Infrastructure/IClientService';
 import { IotHubClientService } from './Infrastructure/IotHubClientService';
 
