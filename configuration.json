@@ -23,26 +23,26 @@
         }],
         "timedActorConfiguration": [{
             "actorId": "19",
-            "cron": "20 22 * APR,MAY,JUN,JUL,AUG,SEP *",
-            "duration": 5,
+            "cron": "30 22 * 4,5,6,7,8,9 *",
+            "duration": 55,
             "weatherAware": true
         },
         {
             "actorId": "20",
-            "cron": "20 22 * APR,MAY,JUN,JUL,AUG,SEP *",
-            "duration": 10,
+            "cron": "30 22 * 4,5,6,7,8,9 *",
+            "duration": 55,
             "weatherAware": true
         },
         {
             "actorId": "21",
-            "cron": "20 22 * APR,MAY,JUN,JUL,AUG,SEP *",
-            "duration": 15,
+            "cron": "30 22 * 4,5,6,7,8,9 *",
+            "duration": 55,
             "weatherAware": false
         },
         {
             "actorId": "26",
-            "cron": "20 22 * APR,MAY,JUN,JUL,AUG,SEP *",
-            "duration": 20,
+            "cron": "30 22 * 4,5,6,7,8,9 *",
+            "duration": 55,
             "weatherAware": true
         }]
     }

@@ -1,4 +1,5 @@
 import { Container } from 'inversify';
+import * as moment from 'moment';
 import * as configfile from '../configuration.json';
 import * as keysfile from '../keys.json';
 import { ActorRepository } from './Domain/ActorRepository';
