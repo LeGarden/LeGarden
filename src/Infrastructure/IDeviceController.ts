@@ -1,6 +1,6 @@
-import { IActor } from "./IActor";
+import { IActor } from './IActor';
 
 export interface IDeviceController {
-    turnActorOn(actor: IActor): void;
-    turnActorOff(actor: IActor): void;
+  turnActorOn(actor: IActor): void;
+  turnActorOff(actor: IActor): void;
 }

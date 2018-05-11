@@ -1,21 +1,21 @@
-import * as keys from '../keys.json';
+import * as configfile from '../configuration.json';
+import { IConfiguration } from './Domain/IConfiguration';
+import { LeGardenService } from './Domain/LeGardenService';
 import { IClientService } from './Infrastructure/IClientService';
+import { IDeviceController } from './Infrastructure/IDeviceController';
 import { IotHubClientService } from './Infrastructure/IotHubClientService';
+import { MockDeviceController } from './Infrastructure/MockDeviceController';
 
-const connectionString = (keys as any).iotHubConnectionstring;
-const client: IClientService = new IotHubClientService(connectionString);
+const config: IConfiguration = (configfile as any).configuration;
+const client: IClientService = new IotHubClientService(
+  config.iotHubConnectionstring
+);
+const deviceController: IDeviceController = new MockDeviceController();
 
-const sendInterval = setInterval(() => {
-  const windSpeed = 10 + Math.random() * 4; // range: [10, 14]
-  const temperature = 20 + Math.random() * 10; // range: [20, 30]
-  const humidity = 60 + Math.random() * 20; // range: [60, 80]
-  const data = JSON.stringify({
-    deviceId: 'myFirstDevice',
-    humidity,
-    temperature,
-    windSpeed,
-  });
-  client.sendEvent(data);
-}, 2000);
+const leGardenService: LeGardenService = new LeGardenService(
+  config,
+  client,
+  deviceController
+);
 
-client.connect();
+leGardenService.initialize();

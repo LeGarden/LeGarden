@@ -1,10 +1,10 @@
 export interface IActor {
-    id: string;
-    name: string;
-    state: ActorState;
+  id: string;
+  name: string;
+  state: ActorState;
 }
 
 export enum ActorState {
-    On,
-    Off
+  On,
+  Off,
 }
