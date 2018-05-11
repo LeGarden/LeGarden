@@ -34,26 +34,24 @@ export class LeGardenService {
     this.clientService.connectionState.subscribe((val: boolean) => {
       this.clientConnectionState = val;
       // tslint:disable-next-line:no-console
-      console.log('clientConnectionState: ' + this.clientConnectionState);
+      console.log('cloudconnectionState: ' + this.clientConnectionState);
     });
 
     this.timedActorConfiguration.forEach((tac: ITimedActorConfiguration) => {
       schedule(tac.cron, () => {
-        if (tac.actor) {
-          const actor = this.actorRepo.get(tac.actor.id);
+          const actor = this.actorRepo.get(tac.actorId);
           if (actor) {
             this.deviceController.turnActorOn(actor);
             setTimeout(() => {
               this.deviceController.turnActorOff(actor);
             }, tac.duration * 1000);
           }
-        }
       });
     });
 
     const sendInterval = setInterval(() => {
       this.check();
-    }, this.config.checkCycleInterval);
+    }, this.config.checkCycleInterval * 1000);
   }
 
   private check(): void {

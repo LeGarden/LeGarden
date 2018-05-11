@@ -1,7 +1,7 @@
 import { IActor } from '../Infrastructure/IActor';
 
 export interface ITimedActorConfiguration {
-  actor?: IActor;
+  actorId: string;
   cron: string;
   duration: number;
 }
