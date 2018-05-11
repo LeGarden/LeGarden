@@ -4,7 +4,7 @@ import { ActorState, IActor } from './IActor';
 import { IDeviceController } from './IDeviceController';
 
 export class RaspyDeviceContoller implements IDeviceController {
-  private actorId2Gpio: Map<string, onoff.Gpio>;
+  private actorId2Gpio: Map<string, any>;
 
   constructor() {
     this.actorId2Gpio = new Map([
@@ -39,8 +39,8 @@ export class RaspyDeviceContoller implements IDeviceController {
   }
 
   public unexport(): void {
-    this.actorId2Gpio.forEach(gpio => {
-      gpio.unexport();
+    this.actorId2Gpio.forEach((value: any, key: string) => {
+      value.unexport();
     });
   }
 }
