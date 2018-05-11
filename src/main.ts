@@ -2,6 +2,7 @@ import * as configfile from '../configuration.json';
 import * as keysfile from '../keys.json';
 import { ActorRepository } from './Domain/ActorRepository';
 import { IConfiguration } from './Domain/IConfiguration';
+import { ITimedActorConfiguration } from './Domain/ITimedActorConfiguration';
 import { LeGardenService } from './Domain/LeGardenService';
 import { IClientService } from './Infrastructure/IClientService';
 import { IDeviceController } from './Infrastructure/IDeviceController';

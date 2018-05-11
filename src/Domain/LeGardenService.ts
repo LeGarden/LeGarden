@@ -1,3 +1,4 @@
+import { schedule } from 'node-cron';
 import { ActorState, IActor } from '../Infrastructure/IActor';
 import { IClientService } from '../Infrastructure/IClientService';
 import { IDeviceController } from '../Infrastructure/IDeviceController';
@@ -36,38 +37,26 @@ export class LeGardenService {
       console.log('clientConnectionState: ' + this.clientConnectionState);
     });
 
+    this.timedActorConfiguration.forEach((tac: ITimedActorConfiguration) => {
+      schedule(tac.cron, () => {
+        if (tac.actor) {
+          const actor = this.actorRepo.get(tac.actor.id);
+          if (actor) {
+            this.deviceController.turnActorOn(actor);
+            setTimeout(() => {
+              this.deviceController.turnActorOff(actor);
+            }, tac.duration * 1000);
+          }
+        }
+      });
+    });
+
     const sendInterval = setInterval(() => {
       this.check();
     }, this.config.checkCycleInterval);
   }
 
   private check(): void {
-    // tslint:disable-next-line:no-console
-    console.log('checking timedconfigs');
-    this.timedActorConfiguration.forEach((tac: ITimedActorConfiguration) => {
-      const currentDate = new Date();
-      const actor = this.actorRepo.get(tac.actor.id);
-
-      if (actor) {
-        if (
-          tac.from.getHours() > currentDate.getHours() &&
-          tac.from.getMinutes() > currentDate.getMinutes() &&
-          tac.to.getHours() < currentDate.getHours() &&
-          tac.to.getMinutes() < currentDate.getMinutes()
-        ) {
-          // should be On
-          if (actor.state === ActorState.Off) {
-            this.deviceController.turnActorOn(actor);
-          }
-        } else {
-          // should be Off
-          if (actor.state === ActorState.On) {
-            this.deviceController.turnActorOff(actor);
-          }
-        }
-      }
-    });
-
     if (this.clientConnectionState === true) {
       //   this.clientService.sendEvent(data);
     }

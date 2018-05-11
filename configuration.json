@@ -1,7 +1,19 @@
 {
     "configuration": {
         "checkCycleInterval": 4000,
-        "actors": [],
-        "timedActorConfiguration": []
+        "actors": [{
+            "id": "19",
+            "name": "Hochbeet",
+            "state": "Off"
+        }],
+        "timedActorConfiguration": [{
+            "actor": {
+                "id": "19",
+                "name": "Hochbeet",
+                "state": "Off"
+            },
+            "cron": "* * * * *",
+            "duration": 30
+        }]
     }
 }
