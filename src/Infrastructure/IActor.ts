@@ -6,5 +6,5 @@ export interface IActor {
 
 export enum ActorState {
   Off = 0,
-  On = 1
+  On = 1,
 }

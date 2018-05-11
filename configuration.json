@@ -4,12 +4,19 @@
         "actors": [{
             "id": "19",
             "name": "Hochbeet",
-            "state": "Off"
+            "state": 0
         }],
         "timedActorConfiguration": [{
             "actorId": "19",
             "cron": "* * * * *",
-            "duration": 30
+            "duration": 30,
+            "weatherAware": true
+        },
+        {
+            "actorId": "19",
+            "cron": "05 19 * APR,MAY,JUN,JUL,AUG,SEP *",
+            "duration": 1800,
+            "weatherAware": true
         }]
     }
 }
