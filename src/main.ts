@@ -1,4 +1,5 @@
 import * as configfile from '../configuration.json';
+import * as keysfile from '../keys.json';
 import { ActorRepository } from './Domain/ActorRepository';
 import { IConfiguration } from './Domain/IConfiguration';
 import { LeGardenService } from './Domain/LeGardenService';
@@ -8,8 +9,9 @@ import { IotHubClientService } from './Infrastructure/IotHubClientService';
 import { MockDeviceController } from './Infrastructure/MockDeviceController';
 
 const config: IConfiguration = (configfile as any).configuration;
+const keys: any = (keysfile as any);
 const client: IClientService = new IotHubClientService(
-  config.iotHubConnectionstring
+  keys.iotHubConnectionstring
 );
 const deviceController: IDeviceController = new MockDeviceController();
 const actorRepo: ActorRepository = new ActorRepository(config.actors);

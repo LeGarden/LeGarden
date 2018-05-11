@@ -44,6 +44,8 @@ export class LeGardenService {
 
   private check(): void {
 
+    // tslint:disable-next-line:no-console
+    console.log('clientConnectionState: ' + this.clientConnectionState);
     this.timedActorConfiguration.forEach((tac: ITimedActorConfiguration) => {
         const currentDate = new Date();
         const actor = this.actorRepo.get(tac.actor.id);

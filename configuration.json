@@ -1,6 +1,5 @@
 {
     "configuration": {
-        "iotHubConnectionstring": "HostName=LeGardenHub.azure-devices.net;DeviceId=raspi@legarden;SharedAccessKey=JtgOAdt9zuJcXGAUB5E8rucFTEGVbyUBKp9soF5HT34=",
         "checkCycleInterval": 4000,
         "actors": [],
         "timedActorConfiguration": []
