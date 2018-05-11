@@ -13,4 +13,9 @@ export class MockDeviceController implements IDeviceController {
     // tslint:disable-next-line:no-console
     console.log('actor ' + actor.id + ' turned ' + actor.state);
   }
+
+  public unexport(): void {
+    // tslint:disable-next-line:no-console
+    console.log('Unexporting Mock GPIOs');
+  }
 }
