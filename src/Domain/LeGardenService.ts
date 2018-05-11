@@ -13,7 +13,6 @@ export class LeGardenService {
   private deviceController: IDeviceController;
   private config: IConfiguration;
   private actorRepo: ActorRepository;
- 
 
   constructor(
     config: IConfiguration,
@@ -43,30 +42,34 @@ export class LeGardenService {
   }
 
   private check(): void {
-
     // tslint:disable-next-line:no-console
-    console.log('clientConnectionState: ' + this.clientConnectionState);
+    console.log('checking timedconfigs');
     this.timedActorConfiguration.forEach((tac: ITimedActorConfiguration) => {
-        const currentDate = new Date();
-        const actor = this.actorRepo.get(tac.actor.id);
+      const currentDate = new Date();
+      const actor = this.actorRepo.get(tac.actor.id);
 
-        if(actor) {
-            if (tac.from.getHours() > currentDate.getHours() && tac.from.getMinutes() > currentDate.getMinutes() && tac.to.getHours() < currentDate.getHours() && tac.to.getMinutes() < currentDate.getMinutes()) {
-                // should be On
-                if(actor.state === ActorState.Off) {
-                    this.deviceController.turnActorOn(actor);
-                }
-            } else {
-                // should be Off
-                if(actor.state === ActorState.On) {
-                    this.deviceController.turnActorOff(actor);
-                }
-            }
+      if (actor) {
+        if (
+          tac.from.getHours() > currentDate.getHours() &&
+          tac.from.getMinutes() > currentDate.getMinutes() &&
+          tac.to.getHours() < currentDate.getHours() &&
+          tac.to.getMinutes() < currentDate.getMinutes()
+        ) {
+          // should be On
+          if (actor.state === ActorState.Off) {
+            this.deviceController.turnActorOn(actor);
+          }
+        } else {
+          // should be Off
+          if (actor.state === ActorState.On) {
+            this.deviceController.turnActorOff(actor);
+          }
         }
+      }
     });
 
     if (this.clientConnectionState === true) {
-    //   this.clientService.sendEvent(data);
+      //   this.clientService.sendEvent(data);
     }
   }
 }

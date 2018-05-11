@@ -9,7 +9,7 @@ import { IotHubClientService } from './Infrastructure/IotHubClientService';
 import { MockDeviceController } from './Infrastructure/MockDeviceController';
 
 const config: IConfiguration = (configfile as any).configuration;
-const keys: any = (keysfile as any);
+const keys: any = keysfile as any;
 const client: IClientService = new IotHubClientService(
   keys.iotHubConnectionstring
 );

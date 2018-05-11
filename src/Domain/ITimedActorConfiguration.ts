@@ -1,7 +1,7 @@
-import { IActor } from "../Infrastructure/IActor";
+import { IActor } from '../Infrastructure/IActor';
 
 export interface ITimedActorConfiguration {
-    actor: IActor;
-    from: Date;
-    to: Date;
+  actor: IActor;
+  from: Date;
+  to: Date;
 }

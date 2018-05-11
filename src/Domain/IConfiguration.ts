@@ -1,5 +1,5 @@
-import { IActor } from "../Infrastructure/IActor";
-import { ITimedActorConfiguration } from "./ITimedActorConfiguration";
+import { IActor } from '../Infrastructure/IActor';
+import { ITimedActorConfiguration } from './ITimedActorConfiguration';
 
 export interface IConfiguration {
   checkCycleInterval: number;
