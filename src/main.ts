@@ -10,34 +10,44 @@ import { IClientService } from './Infrastructure/IClientService';
 import { IDeviceController } from './Infrastructure/IDeviceController';
 import { IotHubClientService } from './Infrastructure/IotHubClientService';
 import { MockDeviceController } from './Infrastructure/MockDeviceController';
-// import { RaspyDeviceContoller } from './Infrastructure/RaspyDeviceController';
 
-const config: IConfiguration = (configfile as any).configuration;
-const keys: any = keysfile as any;
+// tslint:disable-next-line:no-var-requires
+const isPi = require('detect-rpi');
+main();
 
-const container = new Container();
-container
-  .bind<IClientService>('IClientService')
-  .toConstantValue(new IotHubClientService(keys.iotHubConnectionstring));
+async function main() {
+  const config: IConfiguration = (configfile as any).configuration;
+  const keys: any = keysfile as any;
 
-// if (os.os !== '') {
-container
-  .bind<IDeviceController>('IDeviceController')
-  .toConstantValue(new MockDeviceController());
-// } else {
-// container
-//   .bind<IDeviceController>('IDeviceController')
-//   .toConstantValue(new RaspyDeviceContoller());
-// }
+  const container = new Container();
+  container
+    .bind<IClientService>('IClientService')
+    .toConstantValue(new IotHubClientService(keys.iotHubConnectionstring));
 
-const deviceController: IDeviceController = new MockDeviceController();
-const actorRepo: ActorRepository = new ActorRepository(config.actors);
+  if (isPi() === false) {
+    container
+      .bind<IDeviceController>('IDeviceController')
+      .toConstantValue(new MockDeviceController());
+  } else {
+    const module = await importRaspyDeviceContollerModule();
+    container
+      .bind<IDeviceController>('IDeviceController')
+      .toConstantValue(new module.RaspyDeviceContoller());
+  }
 
-const leGardenService: LeGardenService = new LeGardenService(
-  config,
-  actorRepo,
-  container.get<IClientService>('IClientService'),
-  container.get<IDeviceController>('IDeviceController')
-);
+  const deviceController: IDeviceController = new MockDeviceController();
+  const actorRepo: ActorRepository = new ActorRepository(config.actors);
 
-leGardenService.initialize();
+  const leGardenService: LeGardenService = new LeGardenService(
+    config,
+    actorRepo,
+    container.get<IClientService>('IClientService'),
+    container.get<IDeviceController>('IDeviceController')
+  );
+
+  leGardenService.initialize();
+}
+
+async function importRaspyDeviceContollerModule(): Promise<any> {
+  return import('./Infrastructure/RaspyDeviceController');
+}
