@@ -32,6 +32,7 @@
   "dependencies": {
     "azure-iot-device": "^1.4.1",
     "azure-iot-device-mqtt": "^1.4.1",
+    "detect-rpi": "^1.2.0",
     "inversify": "^4.11.1",
     "moment": "^2.22.1",
     "node-cron": "^1.2.1",
