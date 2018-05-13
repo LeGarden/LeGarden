@@ -9,9 +9,7 @@ import { IClientService } from './Infrastructure/IClientService';
 import { IDeviceController } from './Infrastructure/IDeviceController';
 import { IotHubClientService } from './Infrastructure/IotHubClientService';
 import { MockDeviceController } from './Infrastructure/MockDeviceController';
-import { RaspyDeviceContoller } from './Infrastructure/RaspyDeviceController';
-// tslint:disable-next-line:no-var-requires
-const os = require('node.os');
+// import { RaspyDeviceContoller } from './Infrastructure/RaspyDeviceController';
 
 const config: IConfiguration = (configfile as any).configuration;
 const keys: any = keysfile as any;
@@ -21,15 +19,15 @@ container
   .bind<IClientService>('IClientService')
   .toConstantValue(new IotHubClientService(keys.iotHubConnectionstring));
 
-if (os.os === 'win') {
-  container
-    .bind<IDeviceController>('IDeviceController')
-    .toConstantValue(new MockDeviceController());
-} else {
-  container
-    .bind<IDeviceController>('IDeviceController')
-    .toConstantValue(new RaspyDeviceContoller());
-}
+// if (os.os !== '') {
+container
+  .bind<IDeviceController>('IDeviceController')
+  .toConstantValue(new MockDeviceController());
+// } else {
+// container
+//   .bind<IDeviceController>('IDeviceController')
+//   .toConstantValue(new RaspyDeviceContoller());
+// }
 
 const deviceController: IDeviceController = new MockDeviceController();
 const actorRepo: ActorRepository = new ActorRepository(config.actors);

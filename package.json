@@ -34,7 +34,6 @@
     "azure-iot-device-mqtt": "^1.4.1",
     "inversify": "^4.11.1",
     "node-cron": "^1.2.1",
-    "node.os": "^1.2.4",
     "reflect-metadata": "^0.1.12",
     "rxjs": "^6.1.0"
   },
