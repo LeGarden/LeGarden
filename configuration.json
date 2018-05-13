@@ -5,17 +5,44 @@
             "id": "19",
             "name": "Hochbeet",
             "state": 0
+        },
+        {
+            "id": "20",
+            "name": "Feldbeet",
+            "state": 0
+        },
+        {
+            "id": "21",
+            "name": "Gewächshaus",
+            "state": 0
+        },
+        {
+            "id": "26",
+            "name": "Tiefbeet",
+            "state": 0
         }],
         "timedActorConfiguration": [{
             "actorId": "19",
-            "cron": "* * * * *",
-            "duration": 30,
+            "cron": "0 18 * 4,5,6,7,8,9 *",
+            "duration": 600,
             "weatherAware": true
         },
         {
-            "actorId": "19",
-            "cron": "05 19 * APR,MAY,JUN,JUL,AUG,SEP *",
-            "duration": 1800,
+            "actorId": "20",
+            "cron": "0 18 * 4,5,6,7,8,9 *",
+            "duration": 900,
+            "weatherAware": true
+        },
+        {
+            "actorId": "21",
+            "cron": "11 18 * 4,5,6,7,8,9 *",
+            "duration": 900,
+            "weatherAware": false
+        },
+        {
+            "actorId": "26",
+            "cron": "16 18 * 4,5,6,7,8,9 *",
+            "duration": 900,
             "weatherAware": true
         }]
     }
