@@ -35,7 +35,6 @@
     "detect-rpi": "^1.2.0",
     "inversify": "^4.11.1",
     "moment": "^2.22.1",
-    "node-cmd": "^3.0.0",
     "node-cron": "^1.2.1",
     "reflect-metadata": "^0.1.12",
     "rxjs": "^6.1.0"
