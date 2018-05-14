@@ -2,6 +2,7 @@ import { schedule } from 'node-cron';
 import { ActorState, IActor } from '../Infrastructure/IActor';
 import { IClientService } from '../Infrastructure/IClientService';
 import { IDeviceController } from '../Infrastructure/IDeviceController';
+import { INetworkController } from '../Infrastructure/INetworkController';
 import { ActorRepository } from './ActorRepository';
 import { IConfiguration } from './IConfiguration';
 import { ITimedActorConfiguration } from './ITimedActorConfiguration';
@@ -12,6 +13,7 @@ export class LeGardenService {
 
   private clientService: IClientService;
   private deviceController: IDeviceController;
+  private networkController: INetworkController;
   private config: IConfiguration;
   private actorRepo: ActorRepository;
 
@@ -19,16 +21,22 @@ export class LeGardenService {
     config: IConfiguration,
     actorRepo: ActorRepository,
     clientService: IClientService,
-    deviceController: IDeviceController
+    deviceController: IDeviceController,
+    networkController: INetworkController
   ) {
     this.clientService = clientService;
     this.deviceController = deviceController;
+    this.networkController = networkController;
     this.config = config;
     this.timedActorConfiguration = config.timedActorConfiguration;
     this.actorRepo = actorRepo;
   }
 
-  public initialize(): void {
+  public async initialize(): Promise<any> {
+    // todo: nice up ;-)
+    await this.networkController.setupModem();
+    await this.networkController.connect();
+
     this.clientService.connect();
 
     this.clientService.connectionState.subscribe((val: boolean) => {

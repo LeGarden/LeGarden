@@ -8,8 +8,11 @@ import { ITimedActorConfiguration } from './Domain/ITimedActorConfiguration';
 import { LeGardenService } from './Domain/LeGardenService';
 import { IClientService } from './Infrastructure/IClientService';
 import { IDeviceController } from './Infrastructure/IDeviceController';
+import { INetworkController } from './Infrastructure/INetworkController';
 import { IotHubClientService } from './Infrastructure/IotHubClientService';
 import { MockDeviceController } from './Infrastructure/MockDeviceController';
+import { MockNetworkController } from './Infrastructure/MockNetworkController';
+import { UmtsNetworkController } from './Infrastructure/UmtsNetworkController';
 
 // tslint:disable-next-line:no-var-requires
 const isPi = require('detect-rpi');
@@ -28,11 +31,17 @@ async function main() {
     container
       .bind<IDeviceController>('IDeviceController')
       .toConstantValue(new MockDeviceController());
+    container
+      .bind<INetworkController>('INetworkController')
+      .toConstantValue(new MockNetworkController());
   } else {
     const module = await importRaspyDeviceContollerModule();
     container
       .bind<IDeviceController>('IDeviceController')
       .toConstantValue(new module.RaspyDeviceContoller());
+    container
+      .bind<INetworkController>('IDeviceController')
+      .toConstantValue(new UmtsNetworkController(config.network));
   }
 
   const deviceController: IDeviceController = new MockDeviceController();
@@ -42,7 +51,8 @@ async function main() {
     config,
     actorRepo,
     container.get<IClientService>('IClientService'),
-    container.get<IDeviceController>('IDeviceController')
+    container.get<IDeviceController>('IDeviceController'),
+    container.get<INetworkController>('INetworkController')
   );
 
   leGardenService.initialize();

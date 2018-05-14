@@ -9,13 +9,13 @@ export class RaspyDeviceContoller implements IDeviceController {
   constructor() {
     this.actorId2Gpio = new Map([
       ['26', new onoff.Gpio(26, 'high')],
-      ['4',  new onoff.Gpio( 4, 'high')],
+      ['4', new onoff.Gpio(4, 'high')],
       ['17', new onoff.Gpio(17, 'high')],
       ['27', new onoff.Gpio(27, 'high')],
       ['22', new onoff.Gpio(22, 'high')],
-      ['5',  new onoff.Gpio( 5, 'high')],
-      ['6',  new onoff.Gpio( 6, 'high')], 
-      ['13', new onoff.Gpio(13, 'high')]
+      ['5', new onoff.Gpio(5, 'high')],
+      ['6', new onoff.Gpio(6, 'high')],
+      ['13', new onoff.Gpio(13, 'high')],
     ]);
   }
 
