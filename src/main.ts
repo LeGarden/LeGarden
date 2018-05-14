@@ -40,11 +40,10 @@ async function main() {
       .bind<IDeviceController>('IDeviceController')
       .toConstantValue(new module.RaspyDeviceContoller());
     container
-      .bind<INetworkController>('IDeviceController')
+      .bind<INetworkController>('INetworkController')
       .toConstantValue(new UmtsNetworkController(config.network));
   }
 
-  const deviceController: IDeviceController = new MockDeviceController();
   const actorRepo: ActorRepository = new ActorRepository(config.actors);
 
   const leGardenService: LeGardenService = new LeGardenService(
