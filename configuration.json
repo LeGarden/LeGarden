@@ -3,7 +3,6 @@
         "checkCycleInterval": 4,
         "network" :
         {
-          "usbModeSwitchCmd" : "sudo \/usr\/sbin\/usb_modeswitch -c \/etc\/usb_modeswitch.d\/12d1\\:14fe",
           "connectUmtsCmd" : "\/opt\/sakis3g\/sakis3g --sudo \"connect\"",
           "disconnectUmtsCmd": "\/opt\/sakis3g\/sakis3g --sudo \"disconnect\""
         },

@@ -33,9 +33,11 @@ export class LeGardenService {
   }
 
   public async initialize(): Promise<any> {
-    // todo: nice up ;-)
-    await this.networkController.setupModem();
-    await this.networkController.connect();
+    const ret = await this.networkController.connect();
+    // tslint:disable-next-line:no-console
+    console.log('after network connect, ret:');
+    // tslint:disable-next-line:no-console
+    console.log(ret);
 
     this.clientService.connect();
 

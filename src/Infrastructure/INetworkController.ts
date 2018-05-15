@@ -1,5 +1,4 @@
 export interface INetworkController {
-  setupModem(): void;
-  connect(): void;
-  disconnect(): void;
+  connect(): Promise<any>;
+  disconnect(): Promise<any>;
 }

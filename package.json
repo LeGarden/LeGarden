@@ -36,8 +36,10 @@
     "inversify": "^4.11.1",
     "moment": "^2.22.1",
     "node-cron": "^1.2.1",
+    "process-promises": "^1.0.0",
     "reflect-metadata": "^0.1.12",
-    "rxjs": "^6.1.0"
+    "rxjs": "^6.1.0",
+    "split": "^1.0.1"
   },
   "devDependencies": {
     "@types/onoff": "0.0.27",
