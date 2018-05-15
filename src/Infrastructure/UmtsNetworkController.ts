@@ -20,7 +20,11 @@ export class UmtsNetworkController implements INetworkController {
       // tslint:disable-next-line:no-console
       .on('process', (process: any) => console.log('Pid: ', process.pid))
       .then((result: any) => {
-        return { stdout: result.stdout, stderr: result.stderr };
+        // result.stdout should be: E303C connected to E-Plus (26203). 
+        const ret = { stdout: result.stdout, stderr: result.stderr };
+        // tslint:disable-next-line:no-console
+        console.log(ret);
+        return ret;
       });
   }
   public async disconnect(): Promise<any> {
@@ -34,6 +38,7 @@ export class UmtsNetworkController implements INetworkController {
       // tslint:disable-next-line:no-console
       .on('process', (process: any) => console.log('Pid: ', process.pid))
       .then((result: any) => {
+        // result.stdout should be: Disconnected.
         return { stdout: result.stdout, stderr: result.stderr };
       });
   }
