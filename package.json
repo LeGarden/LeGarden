@@ -42,6 +42,7 @@
     "split": "^1.0.1"
   },
   "devDependencies": {
+    "@types/bluebird": "3.5.20",
     "@types/onoff": "0.0.27",
     "@types/jest": "^22.0.1",
     "@types/node": "^8.0.0",
