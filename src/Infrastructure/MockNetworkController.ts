@@ -1,4 +1,4 @@
-import { exec } from 'process-promises';
+import { exec } from 'ts-process-promises';
 import { INetworkController } from './INetworkController';
 
 export class MockNetworkController implements INetworkController {

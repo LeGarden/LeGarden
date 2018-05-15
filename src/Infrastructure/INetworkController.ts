@@ -1,4 +1,4 @@
 export interface INetworkController {
-  connect(): Promise<any>;
-  disconnect(): Promise<any>;
+  connect(): void;
+  disconnect(): void;
 }

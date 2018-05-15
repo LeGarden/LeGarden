@@ -1,4 +1,4 @@
-import { exec } from 'process-promises';
+import { exec, ExecResult } from 'ts-process-promises';
 import { INetworkConfiguration } from '../Domain/INetworkConfiguration';
 import { INetworkController } from './INetworkController';
 
@@ -19,13 +19,10 @@ export class UmtsNetworkController implements INetworkController {
     await exec(this.networkConfig.connectUmtsCmd)
       // tslint:disable-next-line:no-console
       .on('process', (process: any) => console.log('Pid: ', process.pid))
-      .then((result: any) => {
+      .then((result: ExecResult) => {
         // result.stdout should be: E303C connected to E-Plus (26203). 
         // if already connected result will be the same
         const ret = { stdout: result.stdout, stderr: result.stderr };
-        // tslint:disable-next-line:no-console
-        console.log(ret);
-        return ret;
       });
   }
   public async disconnect(): Promise<any> {
