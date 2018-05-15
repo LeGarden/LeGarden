@@ -16,11 +16,12 @@ export class UmtsNetworkController implements INetworkController {
         this.networkConfig.connectUmtsCmd
     );
 
-    exec(this.networkConfig.connectUmtsCmd)
+    await exec(this.networkConfig.connectUmtsCmd)
       // tslint:disable-next-line:no-console
       .on('process', (process: any) => console.log('Pid: ', process.pid))
       .then((result: any) => {
         // result.stdout should be: E303C connected to E-Plus (26203). 
+        // if already connected result will be the same
         const ret = { stdout: result.stdout, stderr: result.stderr };
         // tslint:disable-next-line:no-console
         console.log(ret);
@@ -34,11 +35,12 @@ export class UmtsNetworkController implements INetworkController {
         this.networkConfig.disconnectUmtsCmd
     );
 
-    exec(this.networkConfig.disconnectUmtsCmd)
+    await exec(this.networkConfig.disconnectUmtsCmd)
       // tslint:disable-next-line:no-console
       .on('process', (process: any) => console.log('Pid: ', process.pid))
       .then((result: any) => {
         // result.stdout should be: Disconnected.
+        // if not connected result.stdout will be: Not connected.
         return { stdout: result.stdout, stderr: result.stderr };
       });
   }
