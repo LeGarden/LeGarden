@@ -1,6 +1,6 @@
 {
     "configuration": {
-        "checkCycleInterval": 4,
+        "checkCycleInterval": 60,
         "network" :
         {
           "connectUmtsCmd" : "\/opt\/sakis3g\/sakis3g --sudo \"connect\"",

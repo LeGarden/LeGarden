@@ -35,9 +35,8 @@ export class LeGardenService {
   public async initialize(): Promise<any> {
     const ret = await this.networkController.connect();
     // tslint:disable-next-line:no-console
-    console.log('after network connect, ret:');
-    // tslint:disable-next-line:no-console
-    console.log(ret);
+    console.log('after network connect');
+
 
     this.clientService.connect();
 
@@ -67,6 +66,9 @@ export class LeGardenService {
   private check(): void {
     if (this.clientConnectionState === true) {
       //   this.clientService.sendEvent(data);
+      
+      // tslint:disable-next-line:no-console
+      console.log('IoTConnectionState: ' + this.clientConnectionState);
     }
   }
 }
