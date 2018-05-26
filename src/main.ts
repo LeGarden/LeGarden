@@ -22,6 +22,9 @@ import { UmtsNetworkController } from './Infrastructure/UmtsNetworkController';
 
 // tslint:disable-next-line:no-var-requires
 const isPi = require('detect-rpi');
+// tslint:disable-next-line:no-var-requires
+const aiLogger = require('winston-azure-application-insights')
+  .AzureApplicationInsightsLogger;
 main();
 
 async function main() {
@@ -32,6 +35,10 @@ async function main() {
     transports: [
       new transports.Console({
         level: 'debug',
+      }),
+      new aiLogger({
+        key: keys.applicationInsightsKey,
+        treatErrorsAsExceptions: true
       }),
     ],
   };
