@@ -1,5 +1,11 @@
 import { Container } from 'inversify';
 import * as moment from 'moment';
+import {
+  configure,
+  ConsoleTransportInstance,
+  LoggerOptions,
+  transports,
+} from 'winston';
 import * as configfile from '../configuration.json';
 import * as keysfile from '../keys.json';
 import { ActorRepository } from './Domain/ActorRepository';
@@ -22,6 +28,14 @@ async function main() {
   const config: IConfiguration = (configfile as any).configuration;
   const keys: any = keysfile as any;
 
+  const loggerOptions: LoggerOptions = {
+    transports: [
+      new transports.Console({
+        level: 'debug',
+      }),
+    ],
+  };
+
   const container = new Container();
   container
     .bind<IClientService>('IClientService')
@@ -35,6 +49,14 @@ async function main() {
       .bind<INetworkController>('INetworkController')
       .toConstantValue(new MockNetworkController());
   } else {
+    if (loggerOptions.transports) {
+      const fileTransport = new transports.File({
+        filename: 'main.log',
+        level: 'debug',
+      });
+      loggerOptions.transports.push(fileTransport);
+    }
+
     const module = await importRaspyDeviceContollerModule();
     container
       .bind<IDeviceController>('IDeviceController')
@@ -43,6 +65,8 @@ async function main() {
       .bind<INetworkController>('INetworkController')
       .toConstantValue(new UmtsNetworkController(config.network));
   }
+
+  configure(loggerOptions);
 
   const actorRepo: ActorRepository = new ActorRepository(config.actors);
 

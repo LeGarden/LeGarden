@@ -1,6 +1,7 @@
 import { Client, Message } from 'azure-iot-device';
 import { Mqtt } from 'azure-iot-device-mqtt';
 import { Observable, Observer, Subject } from 'rxjs';
+import { debug, error, info, warn } from 'winston';
 import { IAction } from '../Domain/IAction';
 import { IClientService } from './IClientService';
 
@@ -29,11 +30,9 @@ export class IotHubClientService implements IClientService {
 
   private onConnect(err: any): void {
     if (err) {
-      // tslint:disable-next-line:no-console
-      console.error('Could not connect: ' + err.message);
+      error('Could not connect: ' + err.message);
     } else {
-      // tslint:disable-next-line:no-console
-      console.log('Client connected');
+      info('Client connected');
       this.connectionState.next(true);
       this.client.on('message', this.onMessage.bind(this));
       this.client.on('error', this.onError.bind(this));
@@ -42,13 +41,11 @@ export class IotHubClientService implements IClientService {
   }
 
   private onError(err: any): void {
-    // tslint:disable-next-line:no-console
-    console.error(err.message);
+    error(err.message);
   }
 
   private onMessage(message: Message): void {
-    // tslint:disable-next-line:no-console
-    console.log('Id: ' + message.messageId + ' Body: ' + message.data);
+    info('Id: ' + message.messageId + ' Body: ' + message.data);
     const actionData: IAction = message.data;
 
     this.messages.next(actionData);
@@ -66,12 +63,10 @@ export class IotHubClientService implements IClientService {
 
   private onResult(err: any, result: any): void {
     if (err) {
-      // tslint:disable-next-line:no-console
-      console.error('error: ' + err.toString());
+      error('error: ' + err.toString());
     }
     if (result) {
-      // tslint:disable-next-line:no-console
-      console.log('result: ' + result.constructor.name);
+      debug('result: ' + result.constructor.name);
     }
   }
 }

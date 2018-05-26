@@ -1,5 +1,6 @@
 // tslint:disable-next-line:no-implicit-dependencies
 import onoff = require('onoff');
+import { debug, error, info, warn } from 'winston';
 import { ActorState, IActor } from './IActor';
 import { IDeviceController } from './IDeviceController';
 
@@ -27,8 +28,7 @@ export class RaspyDeviceContoller implements IDeviceController {
       gpio.writeSync(0);
     }
 
-    // tslint:disable-next-line:no-console
-    console.log('Actor ' + actor.name + ' turned ' + actor.state);
+    info('Actor ' + actor.name + ' turned ' + actor.state);
   }
 
   public turnActorOff(actor: IActor): void {
@@ -39,7 +39,7 @@ export class RaspyDeviceContoller implements IDeviceController {
       gpio.writeSync(1);
     }
     // tslint:disable-next-line:no-console
-    console.log('Actor ' + actor.name + ' turned ' + actor.state);
+    info('Actor ' + actor.name + ' turned ' + actor.state);
   }
 
   public unexport(): void {

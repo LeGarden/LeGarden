@@ -1,4 +1,5 @@
 import { schedule } from 'node-cron';
+import { debug, error, info, warn } from 'winston';
 import { ActorState, IActor } from '../Infrastructure/IActor';
 import { IClientService } from '../Infrastructure/IClientService';
 import { IDeviceController } from '../Infrastructure/IDeviceController';
@@ -34,16 +35,13 @@ export class LeGardenService {
 
   public async initialize(): Promise<any> {
     const ret = await this.networkController.connect();
-    // tslint:disable-next-line:no-console
-    console.log('after network connect');
-
+    debug('after network connect');
 
     this.clientService.connect();
 
     this.clientService.connectionState.subscribe((val: boolean) => {
       this.clientConnectionState = val;
-      // tslint:disable-next-line:no-console
-      console.log('cloudConnectionState: ' + this.clientConnectionState);
+      info('cloudConnectionState: ' + this.clientConnectionState);
     });
 
     this.timedActorConfiguration.forEach((tac: ITimedActorConfiguration) => {
@@ -66,9 +64,7 @@ export class LeGardenService {
   private check(): void {
     if (this.clientConnectionState === true) {
       //   this.clientService.sendEvent(data);
-      
-      // tslint:disable-next-line:no-console
-      console.log('IoTConnectionState: ' + this.clientConnectionState);
+      debug('IoTConnectionState: ' + this.clientConnectionState);
     }
   }
 }
