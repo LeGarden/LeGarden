@@ -10,7 +10,9 @@ import { ITimedActorConfiguration } from './ITimedActorConfiguration';
 
 export class LeGardenService {
   public clientConnectionState: boolean = false;
-  public timedActorConfiguration: ITimedActorConfiguration[] = [];
+  public timedActorConfiguration: {
+    [index: string]: ITimedActorConfiguration;
+  } = {};
 
   private clientService: IClientService;
   private deviceController: IDeviceController;
@@ -41,20 +43,23 @@ export class LeGardenService {
 
     this.clientService.connectionState.subscribe((val: boolean) => {
       this.clientConnectionState = val;
-      info('cloudConnectionState: ' + this.clientConnectionState);
+      info('CloudConnectionState: ' + this.clientConnectionState);
     });
 
-    this.timedActorConfiguration.forEach((tac: ITimedActorConfiguration) => {
-      schedule(tac.cron, () => {
-        const actor = this.actorRepo.get(tac.actorId);
-        if (actor) {
-          this.deviceController.turnActorOn(actor);
-          setTimeout(() => {
-            this.deviceController.turnActorOff(actor);
-          }, tac.duration * 1000);
-        }
-      });
-    });
+    for (const key in this.timedActorConfiguration) {
+      if (key) {
+        const tac: ITimedActorConfiguration = this.timedActorConfiguration[key];
+        schedule(tac.cron, () => {
+          const actor = this.actorRepo.get(tac.actorId);
+          if (actor) {
+            this.deviceController.turnActorOn(actor);
+            setTimeout(() => {
+              this.deviceController.turnActorOff(actor);
+            }, tac.duration * 1000);
+          }
+        });
+      }
+    }
 
     const sendInterval = setInterval(() => {
       this.check();
@@ -62,9 +67,8 @@ export class LeGardenService {
   }
 
   private check(): void {
+    // tslint:disable-next-line:no-empty
     if (this.clientConnectionState === true) {
-      //   this.clientService.sendEvent(data);
-      debug('IoTConnectionState: ' + this.clientConnectionState);
     }
   }
 }

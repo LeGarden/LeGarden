@@ -5,6 +5,6 @@ import { ITimedActorConfiguration } from './ITimedActorConfiguration';
 export interface IConfiguration {
   checkCycleInterval: number;
   network: INetworkConfiguration;
-  actors: IActor[];
-  timedActorConfiguration: ITimedActorConfiguration[];
+  actors: { [index: string]: IActor };
+  timedActorConfiguration: { [index: string]: ITimedActorConfiguration };
 }

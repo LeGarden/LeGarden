@@ -1,4 +1,4 @@
-import { Client, Message } from 'azure-iot-device';
+import { Client, Message, Twin } from 'azure-iot-device';
 import { Mqtt } from 'azure-iot-device-mqtt';
 import { Observable, Observer, Subject } from 'rxjs';
 import { debug, error, info, warn } from 'winston';
@@ -8,6 +8,7 @@ import { IClientService } from './IClientService';
 export class IotHubClientService implements IClientService {
   public connectionState: Subject<boolean> = new Subject();
   public messages: Subject<IAction> = new Subject();
+  public twin: Twin | undefined;
   private client: Client;
 
   constructor(connectionString: string) {
@@ -32,11 +33,20 @@ export class IotHubClientService implements IClientService {
     if (err) {
       error('Could not connect: ' + err.message);
     } else {
-      info('Client connected');
+      debug('Client connected');
       this.connectionState.next(true);
       this.client.on('message', this.onMessage.bind(this));
       this.client.on('error', this.onError.bind(this));
       this.client.on('disconnect', this.onDisconnect.bind(this));
+      this.client.getTwin((e?: Error, twin?: Twin) => {
+        if (e) {
+          error(e.message);
+        } else {
+          if (twin) {
+            this.twin = twin;
+          }
+        }
+      });
     }
   }
 

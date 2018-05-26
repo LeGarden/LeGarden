@@ -12,6 +12,7 @@ import { ActorRepository } from './Domain/ActorRepository';
 import { IConfiguration } from './Domain/IConfiguration';
 import { ITimedActorConfiguration } from './Domain/ITimedActorConfiguration';
 import { LeGardenService } from './Domain/LeGardenService';
+import { IActor } from './Infrastructure/IActor';
 import { IClientService } from './Infrastructure/IClientService';
 import { IDeviceController } from './Infrastructure/IDeviceController';
 import { INetworkController } from './Infrastructure/INetworkController';
@@ -35,8 +36,8 @@ async function main() {
     transports: [
       new transports.Console({
         level: 'debug',
-      })
-    ]
+      }),
+    ],
   };
 
   const container = new Container();
@@ -60,7 +61,8 @@ async function main() {
 
       const aiTransport = new aiLogger({
         key: keys.applicationInsightsKey,
-        treatErrorsAsExceptions: true
+        level: 'info',
+        treatErrorsAsExceptions: true,
       });
 
       loggerOptions.transports.push(fileTransport);
@@ -78,7 +80,16 @@ async function main() {
 
   configure(loggerOptions);
 
-  const actorRepo: ActorRepository = new ActorRepository(config.actors);
+  const actors: IActor[] = [];
+
+  for (const key in config.actors) {
+    if (key) {
+      const tac: IActor = config.actors[key];
+      actors.push(tac);
+    }
+  }
+
+  const actorRepo: ActorRepository = new ActorRepository(actors);
 
   const leGardenService: LeGardenService = new LeGardenService(
     config,
