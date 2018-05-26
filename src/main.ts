@@ -35,12 +35,8 @@ async function main() {
     transports: [
       new transports.Console({
         level: 'debug',
-      }),
-      new aiLogger({
-        key: keys.applicationInsightsKey,
-        treatErrorsAsExceptions: true
-      }),
-    ],
+      })
+    ]
   };
 
   const container = new Container();
@@ -61,7 +57,14 @@ async function main() {
         filename: 'main.log',
         level: 'debug',
       });
+
+      const aiTransport = new aiLogger({
+        key: keys.applicationInsightsKey,
+        treatErrorsAsExceptions: true
+      });
+
       loggerOptions.transports.push(fileTransport);
+      loggerOptions.transports.push(aiTransport);
     }
 
     const module = await importRaspyDeviceContollerModule();
