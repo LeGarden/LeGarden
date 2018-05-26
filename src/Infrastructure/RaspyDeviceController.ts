@@ -28,7 +28,7 @@ export class RaspyDeviceContoller implements IDeviceController {
     }
 
     // tslint:disable-next-line:no-console
-    console.log('actor ' + actor.id + ' turned ' + actor.state);
+    console.log('Actor ' + actor.name + ' turned ' + actor.state);
   }
 
   public turnActorOff(actor: IActor): void {
@@ -39,7 +39,7 @@ export class RaspyDeviceContoller implements IDeviceController {
       gpio.writeSync(1);
     }
     // tslint:disable-next-line:no-console
-    console.log('actor ' + actor.id + ' turned ' + actor.state);
+    console.log('Actor ' + actor.name + ' turned ' + actor.state);
   }
 
   public unexport(): void {
