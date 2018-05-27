@@ -26,20 +26,31 @@ export class RaspyDeviceContoller implements IDeviceController {
     const gpio = this.actorId2Gpio.get(actor.id);
     if (gpio) {
       gpio.writeSync(0);
-    }
 
-    info('Actor ' + actor.name + ' turned ' + actor.state);
+      // safety fallback
+      actor.onCallback = setTimeout(() => {
+        if (actor.state === ActorState.On) {
+          this.turnActorOff(actor);
+          warn('turned off actor after longrun.');
+        }
+      }, 3600000);
+      info('Actor ' + actor.name + ' turned ' + actor.state);
+    } else {
+      warn('no gpio found with id ' + actor.id);
+    }
   }
 
   public turnActorOff(actor: IActor): void {
     actor.state = ActorState.Off;
+    clearTimeout(actor.onCallback);
 
     const gpio = this.actorId2Gpio.get(actor.id);
     if (gpio) {
       gpio.writeSync(1);
+      info('Actor ' + actor.name + ' turned ' + actor.state);
+    } else {
+      warn('no gpio found with id ' + actor.id);
     }
-    // tslint:disable-next-line:no-console
-    info('Actor ' + actor.name + ' turned ' + actor.state);
   }
 
   public turnAllActorsOff(): void {
