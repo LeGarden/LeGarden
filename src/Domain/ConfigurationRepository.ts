@@ -48,9 +48,12 @@ export class ConfigurationRepository {
   private persistConfig(twin: Twin) {
     const path = absolute('configuration.json');
     debug('persisting config to ' + path);
+
+    const config = { configuration: twin.properties.desired.configuration };
+
     writeFile(
       path,
-      JSON.stringify(twin.properties.desired.configuration, null, "\t"),
+      JSON.stringify(config, null, '\t'),
       {
         encoding: 'UTF-8',
       },
