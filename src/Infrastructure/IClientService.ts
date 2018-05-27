@@ -1,10 +1,12 @@
+import { Twin } from 'azure-iot-device';
 import { Observable, Subject } from 'rxjs';
 import { IAction } from '../Domain/IAction';
 
 export interface IClientService {
-  connectionState: Subject<boolean>;
+  connectionStatus: boolean;
   messages: Subject<IAction>;
-  connect(): void;
+  connect(): Promise<boolean>;
   disconnect(): void;
   sendEvent(data: any): void;
+  getTwin(): Promise<Twin>;
 }

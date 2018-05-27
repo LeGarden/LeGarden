@@ -3,12 +3,14 @@ import * as moment from 'moment';
 import {
   configure,
   ConsoleTransportInstance,
+  debug,
   LoggerOptions,
   transports,
 } from 'winston';
 import * as configfile from '../configuration.json';
 import * as keysfile from '../keys.json';
 import { ActorRepository } from './Domain/ActorRepository';
+import { ConfigurationRepository } from './Domain/ConfigurationRepository';
 import { IConfiguration } from './Domain/IConfiguration';
 import { ITimedActorConfiguration } from './Domain/ITimedActorConfiguration';
 import { LeGardenService } from './Domain/LeGardenService';
@@ -29,7 +31,6 @@ const aiLogger = require('winston-azure-application-insights')
 main();
 
 async function main() {
-  const config: IConfiguration = (configfile as any).configuration;
   const keys: any = keysfile as any;
 
   const loggerOptions: LoggerOptions = {
@@ -39,13 +40,22 @@ async function main() {
       }),
     ],
   };
+  configure(loggerOptions);
 
   const container = new Container();
   container
     .bind<IClientService>('IClientService')
     .toConstantValue(new IotHubClientService(keys.iotHubConnectionstring));
 
+  const clientService = container.get<IClientService>('IClientService');
+  const configRepo: ConfigurationRepository = new ConfigurationRepository(
+    '../../configuration.json',
+    clientService
+  );
+  const config: IConfiguration = await configRepo.get();
+
   if (isPi() === false) {
+    debug('using mock dicontainer');
     container
       .bind<IDeviceController>('IDeviceController')
       .toConstantValue(new MockDeviceController());
@@ -53,6 +63,7 @@ async function main() {
       .bind<INetworkController>('INetworkController')
       .toConstantValue(new MockNetworkController());
   } else {
+    debug('using productive dicontainer');
     if (loggerOptions.transports) {
       const fileTransport = new transports.File({
         filename: 'main.log',
@@ -68,6 +79,7 @@ async function main() {
       loggerOptions.transports.push(fileTransport);
       loggerOptions.transports.push(aiTransport);
     }
+    configure(loggerOptions);
 
     const module = await importRaspyDeviceContollerModule();
     container
@@ -77,8 +89,6 @@ async function main() {
       .bind<INetworkController>('INetworkController')
       .toConstantValue(new UmtsNetworkController(config.network));
   }
-
-  configure(loggerOptions);
 
   const actors: IActor[] = [];
 
@@ -92,9 +102,9 @@ async function main() {
   const actorRepo: ActorRepository = new ActorRepository(actors);
 
   const leGardenService: LeGardenService = new LeGardenService(
-    config,
+    configRepo,
     actorRepo,
-    container.get<IClientService>('IClientService'),
+    clientService,
     container.get<IDeviceController>('IDeviceController'),
     container.get<INetworkController>('INetworkController')
   );

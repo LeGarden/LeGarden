@@ -6,22 +6,37 @@ import { IAction } from '../Domain/IAction';
 import { IClientService } from './IClientService';
 
 export class IotHubClientService implements IClientService {
-  public connectionState: Subject<boolean> = new Subject();
+  public connectionStatus: boolean = false;
+  // public connectionState: Subject<boolean> = new Subject();
   public messages: Subject<IAction> = new Subject();
-  public twin: Twin | undefined;
   private client: Client;
 
   constructor(connectionString: string) {
     this.client = Client.fromConnectionString(connectionString, Mqtt);
   }
 
-  public connect(): void {
-    this.connectionState.next(false);
-    this.client.open(this.onConnect.bind(this));
+  public connect(): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.client.open((err?: Error, result?: any) => {
+        if (err) {
+          this.connectionStatus = false;
+          error('Could not connect: ' + err.message);
+          reject(false);
+        }
+        if (result) {
+          this.client.on('message', this.onMessage.bind(this));
+          this.client.on('error', this.onError.bind(this));
+          this.client.on('disconnect', this.onDisconnect.bind(this));
+          this.connectionStatus = true;
+          debug('Client connected');
+          resolve(true);
+        }
+      });
+    });
   }
 
   public disconnect(): void {
-    this.client.close(this.onResult.bind(this));
+    this.client.close(this.onDisconnect.bind(this));
   }
 
   public sendEvent(data: any): void {
@@ -29,25 +44,20 @@ export class IotHubClientService implements IClientService {
     this.client.sendEvent(message, this.onResult.bind(this));
   }
 
-  private onConnect(err: any): void {
-    if (err) {
-      error('Could not connect: ' + err.message);
-    } else {
-      debug('Client connected');
-      this.connectionState.next(true);
-      this.client.on('message', this.onMessage.bind(this));
-      this.client.on('error', this.onError.bind(this));
-      this.client.on('disconnect', this.onDisconnect.bind(this));
+  public getTwin(): Promise<Twin> {
+    return new Promise<Twin>((resolve, reject) => {
       this.client.getTwin((e?: Error, twin?: Twin) => {
         if (e) {
           error(e.message);
+          reject(e.message);
         } else {
           if (twin) {
-            this.twin = twin;
+            resolve(twin);
           }
+          reject('no twin received!');
         }
       });
-    }
+    });
   }
 
   private onError(err: any): void {
@@ -64,11 +74,8 @@ export class IotHubClientService implements IClientService {
   }
 
   private onDisconnect(): void {
-    this.connectionState = Observable.create((obs: Observer<boolean>) => {
-      obs.next(false);
-    });
+    this.connectionStatus = false;
     this.client.removeAllListeners();
-    this.client.open(this.onConnect.bind(this));
   }
 
   private onResult(err: any, result: any): void {

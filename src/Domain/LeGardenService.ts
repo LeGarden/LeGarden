@@ -1,12 +1,13 @@
-import { CronJob } from "cron";
-import { debug, error, info, warn } from "winston";
-import { ActorState, IActor } from "../Infrastructure/IActor";
-import { IClientService } from "../Infrastructure/IClientService";
-import { IDeviceController } from "../Infrastructure/IDeviceController";
-import { INetworkController } from "../Infrastructure/INetworkController";
-import { ActorRepository } from "./ActorRepository";
-import { IConfiguration } from "./IConfiguration";
-import { ITimedActorConfiguration } from "./ITimedActorConfiguration";
+import { CronJob } from 'cron';
+import { debug, error, info, warn } from 'winston';
+import { ActorState, IActor } from '../Infrastructure/IActor';
+import { IClientService } from '../Infrastructure/IClientService';
+import { IDeviceController } from '../Infrastructure/IDeviceController';
+import { INetworkController } from '../Infrastructure/INetworkController';
+import { ActorRepository } from './ActorRepository';
+import { ConfigurationRepository } from './ConfigurationRepository';
+import { IConfiguration } from './IConfiguration';
+import { ITimedActorConfiguration } from './ITimedActorConfiguration';
 
 export class LeGardenService {
   public clientConnectionState: boolean = false;
@@ -17,11 +18,12 @@ export class LeGardenService {
   private clientService: IClientService;
   private deviceController: IDeviceController;
   private networkController: INetworkController;
-  private config: IConfiguration;
+  private configRepo: ConfigurationRepository;
   private actorRepo: ActorRepository;
+  private config: IConfiguration | undefined;
 
   constructor(
-    config: IConfiguration,
+    configRepo: ConfigurationRepository,
     actorRepo: ActorRepository,
     clientService: IClientService,
     deviceController: IDeviceController,
@@ -30,26 +32,36 @@ export class LeGardenService {
     this.clientService = clientService;
     this.deviceController = deviceController;
     this.networkController = networkController;
-    this.config = config;
-    this.timedActorConfiguration = config.timedActorConfiguration;
+    this.configRepo = configRepo;
     this.actorRepo = actorRepo;
   }
 
   public async initialize(): Promise<any> {
     const ret = await this.networkController.connect();
-    debug("after network connect");
+    debug('after network connect');
 
-    this.clientService.connect();
+    if (this.clientConnectionState === false) {
+      await this.clientService.connect();
+    }
 
-    this.clientService.connectionState.subscribe((val: boolean) => {
-      this.clientConnectionState = val;
-      info("CloudConnectionState: " + this.clientConnectionState);
-    });
+    this.config = await this.configRepo.get();
+    this.timedActorConfiguration = this.config.timedActorConfiguration;
+    // this.clientService.connectionState.subscribe((val: boolean) => {
+    //   this.clientConnectionState = val;
+    //   info('CloudConnectionState: ' + this.clientConnectionState);
+    // });
 
     for (const key in this.timedActorConfiguration) {
       if (key) {
         const tac: ITimedActorConfiguration = this.timedActorConfiguration[key];
-
+        info(
+          'configuring job for actorid ' +
+            tac.actorId +
+            ' cron ' +
+            tac.cron +
+            ' in state ' +
+            tac.cronActive
+        );
         const job = new CronJob(
           tac.cron,
           () => {
@@ -65,7 +77,7 @@ export class LeGardenService {
             /* This function is executed when the job stops */
           },
           tac.cronActive,
-          "Europe/Berlin"
+          'Europe/Berlin'
         );
       }
     }
