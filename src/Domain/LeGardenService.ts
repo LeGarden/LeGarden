@@ -150,7 +150,7 @@ export class LeGardenService {
     for (const key in this.timedActorConfiguration) {
       if (key) {
         const tac: ITimedActorConfiguration = this.timedActorConfiguration[key];
-        const actor = this.actorRepo.get(tac.actorId);
+
         info(
           'configuring job for actorid ' +
             tac.actorId +
@@ -162,6 +162,7 @@ export class LeGardenService {
         const job = new CronJob(
           tac.cron,
           () => {
+            const actor = this.actorRepo.get(tac.actorId);
             if (actor) {
               this.deviceController.turnActorOn(actor);
               setTimeout(() => {
@@ -172,6 +173,7 @@ export class LeGardenService {
             }
           },
           () => {
+            const actor = this.actorRepo.get(tac.actorId);
             if (actor) {
               this.deviceController.turnActorOff(actor);
             }
