@@ -96,6 +96,7 @@ async function main() {
     if (key) {
       const tac: IActor = config.actors[key];
       actors.push(tac);
+      debug('registered actor with id ' + tac.id);
     }
   }
 

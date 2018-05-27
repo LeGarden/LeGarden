@@ -24,26 +24,26 @@ export class ConfigurationRepository {
             } else {
               warn('got config from file, because of error in connection.');
               this.importConfigFile().then(file => {
-                resolve(file);
+                resolve(file.configuration);
               });
             }
           })
           .catch((reason: string) => {
             warn('got config from file, because of error in connection.');
             this.importConfigFile().then(file => {
-              resolve(file);
+              resolve(file.configuration);
             });
           });
       } else {
         debug('got config from file.');
         this.importConfigFile().then(file => {
-          resolve(file);
+          resolve(file.configuration);
         });
       }
     });
   }
 
-  private async importConfigFile(): Promise<IConfiguration> {
+  private async importConfigFile(): Promise<any> {
     return import(this.configRef);
   }
 }

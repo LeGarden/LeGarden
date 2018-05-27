@@ -46,10 +46,6 @@ export class LeGardenService {
 
     this.config = await this.configRepo.get();
     this.timedActorConfiguration = this.config.timedActorConfiguration;
-    // this.clientService.connectionState.subscribe((val: boolean) => {
-    //   this.clientConnectionState = val;
-    //   info('CloudConnectionState: ' + this.clientConnectionState);
-    // });
 
     for (const key in this.timedActorConfiguration) {
       if (key) {
@@ -71,6 +67,8 @@ export class LeGardenService {
               setTimeout(() => {
                 this.deviceController.turnActorOff(actor);
               }, tac.duration * 1000);
+            } else {
+              warn('actor with id ' + tac.actorId + ' could not be found.');
             }
           },
           () => {
