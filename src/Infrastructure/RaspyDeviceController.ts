@@ -42,7 +42,7 @@ export class RaspyDeviceContoller implements IDeviceController {
     info('Actor ' + actor.name + ' turned ' + actor.state);
   }
 
-  public turnAllActorOff(): void {
+  public turnAllActorsOff(): void {
     this.actorId2Gpio.forEach((value: any, key: string) => {
       value.unexport();
     });
