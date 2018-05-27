@@ -21,6 +21,7 @@ export class LeGardenService {
   private configRepo: ConfigurationRepository;
   private actorRepo: ActorRepository;
   private config: IConfiguration | undefined;
+  private jobs: CronJob[] = [];
 
   constructor(
     configRepo: ConfigurationRepository,
@@ -58,6 +59,7 @@ export class LeGardenService {
     for (const key in this.timedActorConfiguration) {
       if (key) {
         const tac: ITimedActorConfiguration = this.timedActorConfiguration[key];
+        const actor = this.actorRepo.get(tac.actorId);
         info(
           'configuring job for actorid ' +
             tac.actorId +
@@ -69,7 +71,6 @@ export class LeGardenService {
         const job = new CronJob(
           tac.cron,
           () => {
-            const actor = this.actorRepo.get(tac.actorId);
             if (actor) {
               this.deviceController.turnActorOn(actor);
               setTimeout(() => {
@@ -80,13 +81,25 @@ export class LeGardenService {
             }
           },
           () => {
-            /* This function is executed when the job stops */
+            if (actor) {
+              this.deviceController.turnActorOff(actor);
+            }
           },
           tac.cronActive,
           'Europe/Berlin'
         );
+
+        this.jobs.push(job);
       }
     }
+  }
+
+  private deregisterJobs() {
+    this.deviceController.unexport();
+    this.jobs.forEach((j: CronJob) => {
+      j.stop();
+    });
+    this.jobs = [];
   }
 
   private check(): void {

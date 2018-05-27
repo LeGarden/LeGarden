@@ -1,4 +1,5 @@
 import { Twin } from 'azure-iot-device';
+import { writeFile } from 'fs-plus';
 import { debug, warn } from 'winston';
 import { IClientService } from '../Infrastructure/IClientService';
 import { IConfiguration } from './IConfiguration';
@@ -21,6 +22,21 @@ export class ConfigurationRepository {
             if (twin) {
               debug('got config from twin.');
               resolve(twin.properties.desired.configuration);
+
+              writeFile(
+                '../../configuration.json',
+                JSON.stringify(twin.properties.desired.configuration),
+                {
+                  encoding: 'UTF-8',
+                },
+                (err: any) => {
+                  if (err) {
+                    warn('could not persist twinconfig.');
+                  } else {
+                    debug('persisted twinconfig.');
+                  }
+                }
+              );
             } else {
               warn('got config from file, because of error in connection.');
               this.importConfigFile().then(file => {
