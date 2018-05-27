@@ -1,12 +1,12 @@
-import { schedule } from 'node-cron';
-import { debug, error, info, warn } from 'winston';
-import { ActorState, IActor } from '../Infrastructure/IActor';
-import { IClientService } from '../Infrastructure/IClientService';
-import { IDeviceController } from '../Infrastructure/IDeviceController';
-import { INetworkController } from '../Infrastructure/INetworkController';
-import { ActorRepository } from './ActorRepository';
-import { IConfiguration } from './IConfiguration';
-import { ITimedActorConfiguration } from './ITimedActorConfiguration';
+import { CronJob } from "cron";
+import { debug, error, info, warn } from "winston";
+import { ActorState, IActor } from "../Infrastructure/IActor";
+import { IClientService } from "../Infrastructure/IClientService";
+import { IDeviceController } from "../Infrastructure/IDeviceController";
+import { INetworkController } from "../Infrastructure/INetworkController";
+import { ActorRepository } from "./ActorRepository";
+import { IConfiguration } from "./IConfiguration";
+import { ITimedActorConfiguration } from "./ITimedActorConfiguration";
 
 export class LeGardenService {
   public clientConnectionState: boolean = false;
@@ -37,27 +37,36 @@ export class LeGardenService {
 
   public async initialize(): Promise<any> {
     const ret = await this.networkController.connect();
-    debug('after network connect');
+    debug("after network connect");
 
     this.clientService.connect();
 
     this.clientService.connectionState.subscribe((val: boolean) => {
       this.clientConnectionState = val;
-      info('CloudConnectionState: ' + this.clientConnectionState);
+      info("CloudConnectionState: " + this.clientConnectionState);
     });
 
     for (const key in this.timedActorConfiguration) {
       if (key) {
         const tac: ITimedActorConfiguration = this.timedActorConfiguration[key];
-        schedule(tac.cron, () => {
-          const actor = this.actorRepo.get(tac.actorId);
-          if (actor) {
-            this.deviceController.turnActorOn(actor);
-            setTimeout(() => {
-              this.deviceController.turnActorOff(actor);
-            }, tac.duration * 1000);
-          }
-        });
+
+        const job = new CronJob(
+          tac.cron,
+          () => {
+            const actor = this.actorRepo.get(tac.actorId);
+            if (actor) {
+              this.deviceController.turnActorOn(actor);
+              setTimeout(() => {
+                this.deviceController.turnActorOff(actor);
+              }, tac.duration * 1000);
+            }
+          },
+          () => {
+            /* This function is executed when the job stops */
+          },
+          tac.cronActive,
+          "Europe/Berlin"
+        );
       }
     }
 
