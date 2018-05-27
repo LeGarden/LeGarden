@@ -13,7 +13,7 @@ export class MockDeviceController implements IDeviceController {
     info('Actor ' + actor.name + ' turned ' + actor.state);
   }
 
-  public unexport(): void {
+  public turnAllActorOff(): void {
     info('Unexporting Mock GPIOs');
   }
 }

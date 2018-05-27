@@ -95,7 +95,7 @@ export class LeGardenService {
   }
 
   private deregisterJobs() {
-    this.deviceController.unexport();
+    this.deviceController.turnAllActorOff();
     this.jobs.forEach((j: CronJob) => {
       j.stop();
     });
