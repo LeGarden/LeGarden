@@ -7,6 +7,10 @@ export class ActorRepository {
     this.actors = actors;
   }
 
+  public getAll(): IActor[] {
+    return this.actors;
+  }
+
   public get(id: string): IActor | undefined {
     return this.actors.find(x => x.id === id);
   }

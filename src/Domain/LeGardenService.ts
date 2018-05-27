@@ -1,3 +1,4 @@
+import { DeviceMethodRequest, DeviceMethodResponse } from 'azure-iot-device';
 import { CronJob } from 'cron';
 import { debug, error, info, warn } from 'winston';
 import { ActorState, IActor } from '../Infrastructure/IActor';
@@ -47,12 +48,102 @@ export class LeGardenService {
 
     this.config = await this.configRepo.get();
     this.timedActorConfiguration = this.config.timedActorConfiguration;
+    this.clientService.onDeviceMethod(
+      'reconfigure',
+      this.reconfigure.bind(this)
+    );
+    this.clientService.onDeviceMethod('getStatus', this.getStatus.bind(this));
+    this.clientService.onDeviceMethod('act', this.act.bind(this));
 
     this.registerJobs();
 
     const sendInterval = setInterval(() => {
       this.check();
     }, this.config.checkCycleInterval * 1000);
+  }
+
+  private async reconfigure(
+    request: DeviceMethodRequest,
+    response: DeviceMethodResponse
+  ) {
+    info('reconfigure called.');
+
+    this.deregisterJobs();
+    this.config = await this.configRepo.get();
+    this.timedActorConfiguration = this.config.timedActorConfiguration;
+    this.registerJobs();
+
+    info('reconfigure called successfully.');
+    response.send(200, 'reconfigure called successfully.', err => {
+      if (err) {
+        error(
+          'An error ocurred when sending a method response:\n' + err.toString()
+        );
+      } else {
+        debug(
+          "Response to method '" + request.methodName + "' sent successfully."
+        );
+      }
+    });
+  }
+
+  private async getStatus(
+    request: DeviceMethodRequest,
+    response: DeviceMethodResponse
+  ) {
+    info('getStatus called.');
+
+    const payload = this.actorRepo.getAll();
+
+    info('getStatus called successfully.');
+    response.send(200, payload, err => {
+      if (err) {
+        error(
+          'An error ocurred when sending a method response:\n' + err.toString()
+        );
+      } else {
+        debug(
+          "Response to method '" + request.methodName + "' sent successfully."
+        );
+      }
+    });
+  }
+
+  private async act(
+    request: DeviceMethodRequest,
+    response: DeviceMethodResponse
+  ) {
+    info('act called with: ' + request.payload);
+
+    const actor = this.actorRepo.get(request.payload.id);
+    if (actor) {
+      switch (request.payload.state) {
+        case 0:
+          this.deviceController.turnActorOff(actor);
+          break;
+        case 1:
+          this.deviceController.turnActorOn(actor);
+          break;
+        default:
+          response.send(403, 'state allows the values 0 and 1.');
+          break;
+      }
+    } else {
+      response.send(404, 'actor with id ' + request.payload.id + 'not found.');
+    }
+
+    info('act called successfully.');
+    response.send(200, actor, err => {
+      if (err) {
+        error(
+          'An error ocurred when sending a method response:\n' + err.toString()
+        );
+      } else {
+        debug(
+          "Response to method '" + request.methodName + "' sent successfully."
+        );
+      }
+    });
   }
 
   private registerJobs() {

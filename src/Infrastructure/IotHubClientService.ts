@@ -1,4 +1,10 @@
-import { Client, Message, Twin } from 'azure-iot-device';
+import {
+  Client,
+  DeviceMethodRequest,
+  DeviceMethodResponse,
+  Message,
+  Twin,
+} from 'azure-iot-device';
 import { Mqtt } from 'azure-iot-device-mqtt';
 import { Observable, Observer, Subject } from 'rxjs';
 import { debug, error, info, warn } from 'winston';
@@ -42,6 +48,16 @@ export class IotHubClientService implements IClientService {
   public sendEvent(data: any): void {
     const message = new Message(data);
     this.client.sendEvent(message, this.onResult.bind(this));
+  }
+
+  public onDeviceMethod(
+    methodName: string,
+    callback: (
+      request: DeviceMethodRequest,
+      response: DeviceMethodResponse
+    ) => void
+  ): void {
+    this.client.onDeviceMethod(methodName, callback);
   }
 
   public getTwin(): Promise<Twin> {
