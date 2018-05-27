@@ -47,6 +47,14 @@ export class LeGardenService {
     this.config = await this.configRepo.get();
     this.timedActorConfiguration = this.config.timedActorConfiguration;
 
+    this.registerJobs();
+
+    const sendInterval = setInterval(() => {
+      this.check();
+    }, this.config.checkCycleInterval * 1000);
+  }
+
+  private registerJobs() {
     for (const key in this.timedActorConfiguration) {
       if (key) {
         const tac: ITimedActorConfiguration = this.timedActorConfiguration[key];
@@ -79,10 +87,6 @@ export class LeGardenService {
         );
       }
     }
-
-    const sendInterval = setInterval(() => {
-      this.check();
-    }, this.config.checkCycleInterval * 1000);
   }
 
   private check(): void {
