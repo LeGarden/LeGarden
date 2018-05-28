@@ -32,7 +32,7 @@ export class ConfigurationRepository {
           })
           .catch((reason: string) => {
             this.importConfigFile().then(file => {
-              warn('got config from file, because of error in connection.');
+              warn('got config from file, because of ' + reason);
               resolve(file.configuration);
             });
           });
