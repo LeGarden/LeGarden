@@ -42,9 +42,7 @@ export class LeGardenService {
     const ret = await this.networkController.connect();
     debug('after network connect');
 
-    if (this.clientConnectionState === false) {
-      await this.clientService.connect();
-    }
+    await this.connectToIotHub();
 
     this.config = await this.configRepo.get();
     this.timedActorConfiguration = this.config.timedActorConfiguration;
@@ -60,6 +58,31 @@ export class LeGardenService {
     const sendInterval = setInterval(() => {
       this.check();
     }, this.config.checkCycleInterval * 1000);
+  }
+
+  private async connectToIotHub() {
+    if (this.clientConnectionState === false) {
+      await this.clientService.connect().then(
+        (connected: boolean) => {
+          this.clientConnectionState = true;
+        },
+        (reason: string) => {
+          if (this.config) {
+            warn(
+              'could not connect to IotHub retry in ' +
+                this.config.network.iotHubRetryTimeout +
+                's.'
+            );
+            // not sure if really needed because of build in strategy https://github.com/Azure/azure-iot-sdk-node/wiki/Connectivity-and-Retries
+            setTimeout(() => {
+              this.connectToIotHub();
+            }, this.config.network.iotHubRetryTimeout * 1000);
+          } else {
+            warn('could not connect to IotHub.');
+          }
+        }
+      );
+    }
   }
 
   private async reconfigure(

@@ -3,7 +3,8 @@
 		"checkCycleInterval": 60,
 		"network": {
 			"connectUmtsCmd": "/opt/sakis3g/sakis3g --sudo \"connect\"",
-			"disconnectUmtsCmd": "/opt/sakis3g/sakis3g --sudo \"disconnect\""
+			"disconnectUmtsCmd": "/opt/sakis3g/sakis3g --sudo \"disconnect\"",
+			"iotHubRetryTimeout": 600
 		},
 		"actors": {
 			"4": {
