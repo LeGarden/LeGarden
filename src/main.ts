@@ -42,20 +42,26 @@ async function main() {
   };
   configure(loggerOptions);
 
+  let config: IConfiguration | null = null;
+  let configRepo: ConfigurationRepository | null = null;
+  let clientService: IClientService | null = null;
   const container = new Container();
-  container
-    .bind<IClientService>('IClientService')
-    .toConstantValue(new IotHubClientService(keys.iotHubConnectionstring));
-
-  const clientService = container.get<IClientService>('IClientService');
-  const configRepo: ConfigurationRepository = new ConfigurationRepository(
-    '../../configuration.json',
-    clientService
-  );
-  const config: IConfiguration = await configRepo.get();
 
   if (isPi() === false) {
     debug('using mock dicontainer');
+    container
+      .bind<IClientService>('IClientService')
+      .toConstantValue(
+        new IotHubClientService(keys.iotHubConnectionstringTest)
+      );
+
+    clientService = container.get<IClientService>('IClientService');
+    configRepo = new ConfigurationRepository(
+      '../../configuration.json',
+      clientService
+    );
+    config = await configRepo.get();
+
     container
       .bind<IDeviceController>('IDeviceController')
       .toConstantValue(new MockDeviceController());
@@ -80,6 +86,17 @@ async function main() {
       loggerOptions.transports.push(aiTransport);
     }
     configure(loggerOptions);
+
+    container
+      .bind<IClientService>('IClientService')
+      .toConstantValue(new IotHubClientService(keys.iotHubConnectionstring));
+
+    clientService = container.get<IClientService>('IClientService');
+    configRepo = new ConfigurationRepository(
+      '../../configuration.json',
+      clientService
+    );
+    config = await configRepo.get();
 
     const module = await importRaspyDeviceContollerModule();
     container
