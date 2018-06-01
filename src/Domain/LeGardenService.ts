@@ -116,7 +116,15 @@ export class LeGardenService {
   ) {
     info('getStatus called.');
 
-    const payload = this.actorRepo.getAll();
+    const payload: any[] = [];
+
+    this.actorRepo.getAll().forEach((actor: IActor) => {
+      payload.push({
+        id: actor.id,
+        name: actor.name,
+        state: actor.state
+      });
+    });
 
     info('getStatus called successfully.');
     response.send(200, payload, err => {
