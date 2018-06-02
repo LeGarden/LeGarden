@@ -122,7 +122,7 @@ export class LeGardenService {
       payload.push({
         id: actor.id,
         name: actor.name,
-        state: actor.state
+        state: actor.state,
       });
     });
 

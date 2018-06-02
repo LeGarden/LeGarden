@@ -41,29 +41,29 @@
 		"timedActorConfiguration": {
 			"1": {
 				"actorId": "26",
-				"cron": "6 * * * 4,5,6,7,8,9 *",
-				"duration": 1,
+				"cron": "5 * * * 4,5,6,7,8,9 *",
+				"duration": 10,
 				"weatherAware": true,
 				"cronActive": true
 			},
 			"2": {
 				"actorId": "4",
-				"cron": "10 * * * 4,5,6,7,8,9 *",
-				"duration": 1,
+				"cron": "20 * * * 4,5,6,7,8,9 *",
+				"duration": 10,
 				"weatherAware": true,
 				"cronActive": true
 			},
 			"3": {
 				"actorId": "17",
-				"cron": "15 * * * 4,5,6,7,8,9 *",
-				"duration": 1,
+				"cron": "35 * * * 4,5,6,7,8,9 *",
+				"duration": 10,
 				"weatherAware": false,
 				"cronActive": true
 			},
 			"4": {
 				"actorId": "27",
-				"cron": "20 * * * 4,5,6,7,8,9 *",
-				"duration": 1,
+				"cron": "50 * * * 4,5,6,7,8,9 *",
+				"duration": 10,
 				"weatherAware": true,
 				"cronActive": true
 			},

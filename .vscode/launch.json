@@ -7,14 +7,14 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Debug file",
-      "program": "${workspaceRoot}/lib/${fileBasenameNoExtension}.js",
+      "name": "Start Debugging",
+      "program": "${workspaceRoot}/src/main.ts",
       "cwd": "${workspaceRoot}",
       "sourceMaps": true,
       "smartStep": true,
       "preLaunchTask": "build",
       "outFiles": [
-        "${workspaceRoot}/lib/*.js"
+        "${workspaceRoot}/lib/**/*.js"
       ]
     },
     {
