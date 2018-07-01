@@ -1,3 +1,4 @@
+import { lookup } from 'dns';
 import { exec, ExecResult } from 'ts-process-promises';
 import { debug, error, info, warn } from 'winston';
 import { INetworkConfiguration } from '../Domain/INetworkConfiguration';
@@ -10,15 +11,29 @@ export class UmtsNetworkController implements INetworkController {
     this.networkConfig = networkConfig;
   }
 
+  public connected(): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      debug('checking umts connection');
+      lookup('google.com', (err: any) => {
+        if (err && err.code === 'ENOTFOUND') {
+          debug('disconnected');
+          resolve(false);
+        } else {
+          debug('connected');
+          resolve(true);
+        }
+      });
+    });
+  }
+
+  // ToDo: Return a chackable Promise indicating if connected
   public async connect(): Promise<any> {
-    // tslint:disable-next-line:no-console
     debug(
       'connecting to umts, trying to exec cmd: ' +
         this.networkConfig.connectUmtsCmd
     );
 
     await exec(this.networkConfig.connectUmtsCmd)
-      // tslint:disable-next-line:no-console
       .on('process', (process: any) => debug('Pid: ', process.pid))
       .then((result: ExecResult) => {
         // result.stdout should be: E303C connected to E-Plus (26203).

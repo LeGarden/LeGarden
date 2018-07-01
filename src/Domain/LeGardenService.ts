@@ -227,8 +227,16 @@ export class LeGardenService {
   }
 
   private check(): void {
-    // tslint:disable-next-line:no-empty
-    if (this.clientConnectionState === true) {
-    }
+    // Check if connected to Internet and if not reconnect to internet and IotHub
+    this.networkController.connected().then((value: boolean) => {
+      if (value !== true) {
+        this.networkController.connect();
+        this.networkController.connected().then((value2: boolean) => {
+          if (value2 === true) {
+            this.clientService.connect();
+          }
+        });
+      }
+    });
   }
 }

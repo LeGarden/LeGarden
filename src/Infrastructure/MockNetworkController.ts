@@ -1,4 +1,5 @@
-import { exec } from 'ts-process-promises';
+import { lookup } from 'dns';
+import { exec, ExecResult } from 'ts-process-promises';
 import { debug, error, info, warn } from 'winston';
 import { INetworkController } from './INetworkController';
 
@@ -25,5 +26,20 @@ export class MockNetworkController implements INetworkController {
       .then(result => {
         return result.stdout;
       });
+  }
+
+  public connected(): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      debug('checking umts connection');
+      lookup('google.com', (err: any) => {
+        if (err && err.code === 'ENOTFOUND') {
+          debug('disconnected');
+          resolve(false);
+        } else {
+          debug('connected');
+          resolve(true);
+        }
+      });
+    });
   }
 }
