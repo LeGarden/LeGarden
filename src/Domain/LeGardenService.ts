@@ -46,16 +46,13 @@ export class LeGardenService {
 
     this.config = await this.configRepo.get();
     this.timedActorConfiguration = this.config.timedActorConfiguration;
-    this.clientService.onDeviceMethod(
-      'reconfigure',
-      this.reconfigure.bind(this)
-    );
+    this.clientService.onDeviceMethod('reconfigure',this.reconfigure.bind(this));
     this.clientService.onDeviceMethod('getStatus', this.getStatus.bind(this));
     this.clientService.onDeviceMethod('act', this.act.bind(this));
 
     this.registerJobs();
 
-    const sendInterval = setInterval(() => {
+    setInterval(() => {
       this.check();
     }, this.config.checkCycleInterval * 1000);
   }

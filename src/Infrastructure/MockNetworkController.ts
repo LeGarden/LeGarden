@@ -30,7 +30,7 @@ export class MockNetworkController implements INetworkController {
 
   public connected(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      debug('checking umts connection');
+      debug('checking internet connection');
       lookup('google.com', (err: any) => {
         if (err && err.code === 'ENOTFOUND') {
           debug('disconnected');
