@@ -42,7 +42,9 @@ export class RaspyDeviceContoller implements IDeviceController {
 
   public turnActorOff(actor: IActor): void {
     actor.state = ActorState.Off;
-    clearTimeout(actor.onCallback);
+    if (actor.onCallback) {
+      clearTimeout(actor.onCallback);
+    }
 
     const gpio = this.actorId2Gpio.get(actor.id);
     if (gpio) {

@@ -2,7 +2,7 @@ export interface IActor {
   id: string;
   name: string;
   state: ActorState;
-  onCallback: NodeJS.Timer;
+  onCallback?: NodeJS.Timer;
 }
 
 export enum ActorState {

@@ -46,7 +46,10 @@ export class LeGardenService {
 
     this.config = await this.configRepo.get();
     this.timedActorConfiguration = this.config.timedActorConfiguration;
-    this.clientService.onDeviceMethod('reconfigure',this.reconfigure.bind(this));
+    this.clientService.onDeviceMethod(
+      'reconfigure',
+      this.reconfigure.bind(this)
+    );
     this.clientService.onDeviceMethod('getStatus', this.getStatus.bind(this));
     this.clientService.onDeviceMethod('act', this.act.bind(this));
 
@@ -161,7 +164,8 @@ export class LeGardenService {
     }
 
     info('act called successfully.');
-    response.send(200, actor, err => {
+
+    response.send(200, this.actorRepo.clone(actor), err => {
       if (err) {
         error(
           'An error ocurred when sending a method response:\n' + err.toString()

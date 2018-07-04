@@ -14,4 +14,16 @@ export class ActorRepository {
   public get(id: string): IActor | undefined {
     return this.actors.find(x => x.id === id);
   }
+
+  public clone(actor: IActor | undefined): IActor | undefined {
+    if (actor !== undefined) {
+      return {
+        id: actor.id,
+        name: actor.name,
+        onCallback: undefined,
+        state: actor.state,
+      };
+    }
+    return actor;
+  }
 }

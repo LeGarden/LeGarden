@@ -16,7 +16,9 @@ export class MockDeviceController implements IDeviceController {
 
   public turnActorOff(actor: IActor): void {
     actor.state = ActorState.Off;
-    clearTimeout(actor.onCallback);
+    if (actor.onCallback) {
+      clearTimeout(actor.onCallback);
+    }
     info('Actor ' + actor.name + ' turned ' + actor.state);
   }
 
