@@ -13,7 +13,7 @@ export class UmtsNetworkController implements INetworkController {
 
   public connected(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.logger.debug('checking umts connection');
+      this.logger.trace('checking umts connection');
 
       try {
         lookup('google.com', (err: any) => {
@@ -21,7 +21,7 @@ export class UmtsNetworkController implements INetworkController {
             this.logger.debug('disconnected');
             resolve(false);
           } else {
-            this.logger.debug('connected');
+            this.logger.trace('connected');
             resolve(true);
           }
         });

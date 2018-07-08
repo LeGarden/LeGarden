@@ -32,7 +32,9 @@ async function main() {
 
   let logger: ILogger;
   if (isPi() === false) {
-    container.bind<ILogger>('ILogger').toConstantValue(new LocalLogger());
+    container
+      .bind<ILogger>('ILogger')
+      .toConstantValue(new LocalLogger());
     logger = container.get<ILogger>('ILogger');
     logger.debug('using DebugContainer');
     container

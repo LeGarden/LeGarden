@@ -34,13 +34,13 @@ export class MockNetworkController implements INetworkController {
 
   public connected(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.logger.debug('checking internet connection');
+      this.logger.trace('checking internet connection');
       lookup('google.com', (err: any) => {
         if (err && err.code === 'ENOTFOUND') {
           this.logger.debug('disconnected');
           resolve(false);
         } else {
-          this.logger.debug('connected');
+          this.logger.trace('connected');
           resolve(true);
         }
       });

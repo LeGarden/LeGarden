@@ -24,6 +24,10 @@ export class LocalLogger implements ILogger {
     this.logger = createLogger(loggerOptions);
   }
 
+  public trace(msg: string): void {
+    this.logger.silly(msg);
+  }
+
   public debug(msg: string): void {
     this.logger.debug(msg);
   }
