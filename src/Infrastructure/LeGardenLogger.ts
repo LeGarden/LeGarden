@@ -33,8 +33,8 @@ export class LeGardenLogger implements ILogger {
     };
 
     this.aiClient = new TelemetryClient(keys.applicationInsightsKey);
-    // tslint:disable-next-line:no-string-literal
-    this.aiProperties['deviceId'] = keys.deviceId;
+    this.aiClient.context.keys.deviceId = keys.deviceId;
+    this.aiClient.context.keys.userId = keys.deviceId;
 
     this.logger = createLogger(loggerOptions);
   }
