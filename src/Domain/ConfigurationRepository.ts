@@ -1,14 +1,18 @@
 import { Twin } from 'azure-iot-device';
 import { absolute, writeFile } from 'fs-plus';
-import { debug, warn } from 'winston';
 import { IClientService } from '../Infrastructure/IClientService';
+import { ILogger } from '../Infrastructure/ILogger';
 import { IConfiguration } from './IConfiguration';
 
 export class ConfigurationRepository {
   private configRef: string;
   private client: IClientService;
 
-  constructor(configRef: string, client: IClientService) {
+  constructor(
+    private logger: ILogger,
+    configRef: string,
+    client: IClientService
+  ) {
     this.configRef = configRef;
     this.client = client;
   }
@@ -20,25 +24,27 @@ export class ConfigurationRepository {
           .getTwin()
           .then((twin: Twin) => {
             if (twin) {
-              debug('got config from twin.');
+              this.logger.debug('got config from twin.');
               resolve(twin.properties.desired.configuration);
               this.persistConfig(twin);
             } else {
               this.importConfigFile().then(file => {
-                warn('got config from file, because of error in connection.');
+                this.logger.warn(
+                  'got config from file, because of error in connection.'
+                );
                 resolve(file.configuration);
               });
             }
           })
           .catch((reason: string) => {
             this.importConfigFile().then(file => {
-              warn('got config from file, because of ' + reason);
+              this.logger.warn('got config from file, because of ' + reason);
               resolve(file.configuration);
             });
           });
       } else {
         this.importConfigFile().then(file => {
-          debug('got config from file.');
+          this.logger.debug('got config from file.');
           resolve(file.configuration);
         });
       }
@@ -47,7 +53,7 @@ export class ConfigurationRepository {
 
   private persistConfig(twin: Twin) {
     const path = absolute('configuration.json');
-    debug('persisting config to ' + path);
+    this.logger.debug('persisting config to ' + path);
 
     const config = { configuration: twin.properties.desired.configuration };
 
@@ -59,9 +65,9 @@ export class ConfigurationRepository {
       },
       (err: any) => {
         if (err) {
-          warn('could not persist twinconfig.');
+          this.logger.warn('could not persist twinconfig.');
         } else {
-          debug('persisted twinconfig.');
+          this.logger.debug('persisted twinconfig.');
         }
       }
     );

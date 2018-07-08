@@ -1,13 +1,13 @@
 // tslint:disable-next-line:no-implicit-dependencies
 import onoff = require('onoff');
-import { debug, error, info, warn } from 'winston';
 import { ActorState, IActor } from './IActor';
 import { IDeviceController } from './IDeviceController';
+import { ILogger } from './ILogger';
 
 export class RaspyDeviceContoller implements IDeviceController {
   private actorId2Gpio: Map<string, any>;
 
-  constructor() {
+  constructor(private logger: ILogger) {
     this.actorId2Gpio = new Map([
       ['26', new onoff.Gpio(26, 'high')],
       ['4', new onoff.Gpio(4, 'high')],
@@ -31,12 +31,12 @@ export class RaspyDeviceContoller implements IDeviceController {
       actor.onCallback = setTimeout(() => {
         if (actor.state === ActorState.On) {
           this.turnActorOff(actor);
-          warn('turned off actor after longrun.');
+          this.logger.warn('turned off actor after longrun.');
         }
       }, 3600000);
-      info('Actor ' + actor.name + ' turned ' + actor.state);
+      this.logger.info('Actor ' + actor.name + ' turned ' + actor.state);
     } else {
-      warn('no gpio found with id ' + actor.id);
+      this.logger.warn('no gpio found with id ' + actor.id);
     }
   }
 
@@ -49,9 +49,9 @@ export class RaspyDeviceContoller implements IDeviceController {
     const gpio = this.actorId2Gpio.get(actor.id);
     if (gpio) {
       gpio.writeSync(1);
-      info('Actor ' + actor.name + ' turned ' + actor.state);
+      this.logger.info('Actor ' + actor.name + ' turned ' + actor.state);
     } else {
-      warn('no gpio found with id ' + actor.id);
+      this.logger.warn('no gpio found with id ' + actor.id);
     }
   }
 

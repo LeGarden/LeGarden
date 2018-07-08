@@ -1,9 +1,9 @@
 import { DeviceMethodRequest, DeviceMethodResponse } from 'azure-iot-device';
 import { CronJob } from 'cron';
-import { debug, error, info, warn } from 'winston';
 import { ActorState, IActor } from '../Infrastructure/IActor';
 import { IClientService } from '../Infrastructure/IClientService';
 import { IDeviceController } from '../Infrastructure/IDeviceController';
+import { ILogger } from '../Infrastructure/ILogger';
 import { INetworkController } from '../Infrastructure/INetworkController';
 import { ActorRepository } from './ActorRepository';
 import { ConfigurationRepository } from './ConfigurationRepository';
@@ -25,6 +25,7 @@ export class LeGardenService {
   private jobs: CronJob[] = [];
 
   constructor(
+    private logger: ILogger,
     configRepo: ConfigurationRepository,
     actorRepo: ActorRepository,
     clientService: IClientService,
@@ -40,7 +41,7 @@ export class LeGardenService {
 
   public async initialize(): Promise<any> {
     const ret = await this.networkController.connect();
-    debug('after network connect');
+    this.logger.debug('after network connect');
 
     await this.connectToIotHub();
 
@@ -68,7 +69,7 @@ export class LeGardenService {
         },
         (reason: string) => {
           if (this.config) {
-            warn(
+            this.logger.warn(
               'could not connect to IotHub retry in ' +
                 this.config.network.iotHubRetryTimeout +
                 's.'
@@ -78,7 +79,7 @@ export class LeGardenService {
               this.connectToIotHub();
             }, this.config.network.iotHubRetryTimeout * 1000);
           } else {
-            warn('could not connect to IotHub.');
+            this.logger.warn('could not connect to IotHub.');
           }
         }
       );
@@ -89,21 +90,21 @@ export class LeGardenService {
     request: DeviceMethodRequest,
     response: DeviceMethodResponse
   ) {
-    info('reconfigure called.');
+    this.logger.info('reconfigure called.');
 
     this.deregisterJobs();
     this.config = await this.configRepo.get();
     this.timedActorConfiguration = this.config.timedActorConfiguration;
     this.registerJobs();
 
-    info('reconfigure called successfully.');
+    this.logger.info('reconfigure called successfully.');
     response.send(200, 'reconfigure called successfully.', err => {
       if (err) {
-        error(
+        this.logger.error(
           'An error ocurred when sending a method response:\n' + err.toString()
         );
       } else {
-        debug(
+        this.logger.debug(
           "Response to method '" + request.methodName + "' sent successfully."
         );
       }
@@ -114,7 +115,7 @@ export class LeGardenService {
     request: DeviceMethodRequest,
     response: DeviceMethodResponse
   ) {
-    info('getStatus called.');
+    this.logger.info('getStatus called.');
 
     const payload: any[] = [];
 
@@ -126,14 +127,14 @@ export class LeGardenService {
       });
     });
 
-    info('getStatus called successfully.');
+    this.logger.info('getStatus called successfully.');
     response.send(200, payload, err => {
       if (err) {
-        error(
+        this.logger.error(
           'An error ocurred when sending a method response:\n' + err.toString()
         );
       } else {
-        debug(
+        this.logger.debug(
           "Response to method '" + request.methodName + "' sent successfully."
         );
       }
@@ -144,7 +145,7 @@ export class LeGardenService {
     request: DeviceMethodRequest,
     response: DeviceMethodResponse
   ) {
-    info('act called with: ' + request.payload);
+    this.logger.info('act called with: ' + request.payload);
 
     const actor = this.actorRepo.get(request.payload.id);
     if (actor) {
@@ -163,15 +164,15 @@ export class LeGardenService {
       response.send(404, 'actor with id ' + request.payload.id + 'not found.');
     }
 
-    info('act called successfully.');
+    this.logger.info('act called successfully.');
 
     response.send(200, this.actorRepo.clone(actor), err => {
       if (err) {
-        error(
+        this.logger.error(
           'An error ocurred when sending a method response:\n' + err.toString()
         );
       } else {
-        debug(
+        this.logger.debug(
           "Response to method '" + request.methodName + "' sent successfully."
         );
       }
@@ -183,7 +184,7 @@ export class LeGardenService {
       if (key) {
         const tac: ITimedActorConfiguration = this.timedActorConfiguration[key];
 
-        info(
+        this.logger.info(
           'configuring job for actorid ' +
             tac.actorId +
             ' cron ' +
@@ -201,7 +202,9 @@ export class LeGardenService {
                 this.deviceController.turnActorOff(actor);
               }, tac.duration * 1000);
             } else {
-              warn('actor with id ' + tac.actorId + ' could not be found.');
+              this.logger.warn(
+                'actor with id ' + tac.actorId + ' could not be found.'
+              );
             }
           },
           () => {

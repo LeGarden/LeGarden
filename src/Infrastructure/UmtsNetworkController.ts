@@ -1,27 +1,27 @@
 import { lookup } from 'dns';
 import { exec, ExecResult } from 'ts-process-promises';
-import { debug, error, info, warn } from 'winston';
 import { INetworkConfiguration } from '../Domain/INetworkConfiguration';
+import { ILogger } from './ILogger';
 import { INetworkController } from './INetworkController';
 
 export class UmtsNetworkController implements INetworkController {
   private networkConfig: INetworkConfiguration;
 
-  constructor(networkConfig: INetworkConfiguration) {
+  constructor(networkConfig: INetworkConfiguration, private logger: ILogger) {
     this.networkConfig = networkConfig;
   }
 
   public connected(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      debug('checking umts connection');
+      this.logger.debug('checking umts connection');
 
       try {
         lookup('google.com', (err: any) => {
           if (err && err.code === 'ENOTFOUND') {
-            debug('disconnected');
+            this.logger.debug('disconnected');
             resolve(false);
           } else {
-            debug('connected');
+            this.logger.debug('connected');
             resolve(true);
           }
         });
@@ -33,13 +33,13 @@ export class UmtsNetworkController implements INetworkController {
 
   // ToDo: Return a chackable Promise indicating if connected
   public async connect(): Promise<any> {
-    debug(
+    this.logger.debug(
       'connecting to umts, trying to exec cmd: ' +
         this.networkConfig.connectUmtsCmd
     );
 
     await exec(this.networkConfig.connectUmtsCmd)
-      .on('process', (process: any) => debug('Pid: ', process.pid))
+      .on('process', (process: any) => this.logger.debug('Pid: ' + process.pid))
       .then((result: ExecResult) => {
         // result.stdout should be: E303C connected to E-Plus (26203).
         // if already connected result will be the same
@@ -48,14 +48,14 @@ export class UmtsNetworkController implements INetworkController {
   }
   public async disconnect(): Promise<any> {
     // tslint:disable-next-line:no-console
-    debug(
+    this.logger.debug(
       'disconnecting to umts, trying to exec cmd: ' +
         this.networkConfig.disconnectUmtsCmd
     );
 
     await exec(this.networkConfig.disconnectUmtsCmd)
       // tslint:disable-next-line:no-console
-      .on('process', (process: any) => debug('Pid: ', process.pid))
+      .on('process', (process: any) => this.logger.debug('Pid: ' + process.pid))
       .then((result: any) => {
         // result.stdout should be: Disconnected.
         // if not connected result.stdout will be: Not connected.
