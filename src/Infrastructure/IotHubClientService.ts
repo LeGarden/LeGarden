@@ -7,9 +7,9 @@ import {
 } from 'azure-iot-device';
 import { Mqtt } from 'azure-iot-device-mqtt';
 import { Observable, Observer, Subject } from 'rxjs';
-import { debug, error, info, warn } from 'winston';
 import { IAction } from '../Domain/IAction';
 import { IClientService } from './IClientService';
+import { ILogger } from './ILogger';
 
 export class IotHubClientService implements IClientService {
   public connectionStatus: boolean = false;
@@ -17,7 +17,7 @@ export class IotHubClientService implements IClientService {
   public messages: Subject<IAction> = new Subject();
   private client: Client;
 
-  constructor(connectionString: string) {
+  constructor(connectionString: string, private logger: ILogger) {
     this.client = Client.fromConnectionString(connectionString, Mqtt);
   }
 
@@ -26,7 +26,7 @@ export class IotHubClientService implements IClientService {
       this.client.open((err?: Error, result?: any) => {
         if (err) {
           this.connectionStatus = false;
-          error('Could not connect: ' + err.message);
+          this.logger.error('Could not connect: ' + err.message);
           reject(false);
         }
         if (result) {
@@ -34,7 +34,7 @@ export class IotHubClientService implements IClientService {
           this.client.on('error', this.onError.bind(this));
           this.client.on('disconnect', this.onDisconnect.bind(this));
           this.connectionStatus = true;
-          debug('Client connected');
+          this.logger.debug('Client connected');
           resolve(true);
         }
       });
@@ -64,7 +64,7 @@ export class IotHubClientService implements IClientService {
     return new Promise<Twin>((resolve, reject) => {
       this.client.getTwin((e?: Error, twin?: Twin) => {
         if (e) {
-          error(e.message);
+          this.logger.error(e.message);
           reject(e.message);
         } else {
           if (twin) {
@@ -77,11 +77,11 @@ export class IotHubClientService implements IClientService {
   }
 
   private onError(err: any): void {
-    error(err.message);
+    this.logger.error(err.message);
   }
 
   private onMessage(message: Message): void {
-    info('Id: ' + message.messageId + ' Body: ' + message.data);
+    this.logger.info('Id: ' + message.messageId + ' Body: ' + message.data);
     const actionData: IAction = message.data;
 
     this.messages.next(actionData);
@@ -96,10 +96,10 @@ export class IotHubClientService implements IClientService {
 
   private onResult(err: any, result: any): void {
     if (err) {
-      error('error: ' + err.toString());
+      this.logger.error('error: ' + err.toString());
     }
     if (result) {
-      debug('result: ' + result.constructor.name);
+      this.logger.debug('result: ' + result.constructor.name);
     }
   }
 }

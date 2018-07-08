@@ -1,19 +1,27 @@
-import { Logger, LoggerInstance, LoggerOptions, transports } from 'winston';
+import {
+  createLogger,
+  format,
+  Logger,
+  LoggerOptions,
+  transports,
+} from 'winston';
 import { ILogger } from './ILogger';
 
 export class LocalLogger implements ILogger {
-  private logger: LoggerInstance;
+  private logger: Logger;
 
   constructor() {
     const loggerOptions: LoggerOptions = {
       transports: [
         new transports.Console({
+          format: format.combine(format.colorize(), format.simple()),
           level: 'debug',
+          stderrLevels: ['error', 'debug', 'info', 'warn'],
         }),
       ],
     };
 
-    this.logger = new Logger(loggerOptions);
+    this.logger = createLogger(loggerOptions);
   }
 
   public debug(msg: string): void {

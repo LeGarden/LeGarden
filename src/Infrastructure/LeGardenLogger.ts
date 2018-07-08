@@ -1,32 +1,31 @@
-import { Logger, LoggerInstance, LoggerOptions, transports } from 'winston';
+import {
+  createLogger,
+  format,
+  Logger,
+  LoggerOptions,
+  transports,
+} from 'winston';
 import { ILogger } from './ILogger';
 
-// tslint:disable-next-line:no-var-requires
-const aiLogger = require('winston-azure-application-insights')
-  .AzureApplicationInsightsLogger;
-
 export class LeGardenLogger implements ILogger {
-  private logger: LoggerInstance;
+  private logger: Logger;
 
   constructor(keys: any) {
     const loggerOptions: LoggerOptions = {
       transports: [
         new transports.Console({
+          format: format.combine(format.colorize(), format.simple()),
           level: 'debug',
         }),
         new transports.File({
           filename: 'main.log',
+          format: format.combine(format.simple()),
           level: 'debug',
-        }),
-        new aiLogger({
-          key: keys.applicationInsightsKey,
-          level: 'info',
-          treatErrorsAsExceptions: true,
         }),
       ],
     };
 
-    this.logger = new Logger(loggerOptions);
+    this.logger = createLogger(loggerOptions);
   }
 
   public debug(msg: string): void {
