@@ -237,7 +237,10 @@ export class LeGardenService {
         this.networkController.connect();
         this.networkController.connected().then((value2: boolean) => {
           if (value2 === true) {
-            this.clientService.connect();
+            this.logger.info('reconnected to internet');
+            this.clientService.connect().then((value3:boolean) => {
+              this.logger.info('reconnected to iothub');
+            });
           }
         });
       }
