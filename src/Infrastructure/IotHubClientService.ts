@@ -20,7 +20,11 @@ export class IotHubClientService implements IClientService {
   public messages: Subject<IAction> = new Subject();
   private client: Client;
 
-  constructor(connectionString: string, private logger: ILogger) {
+  constructor(
+    connectionString: string,
+    private logger: ILogger,
+    private keys: any
+  ) {
     this.client = Client.fromConnectionString(connectionString, Mqtt);
   }
 
@@ -50,8 +54,9 @@ export class IotHubClientService implements IClientService {
 
   public sendEvent(data: IEvent): void {
     const messageId = uuid.v4();
+    data.eventOccurrence = new Date();
     data.messageId = messageId;
-    data.deviceId = 'raspi@test';
+    data.deviceId = this.keys.deviceId;
     const message = new Message(JSON.stringify(data));
     message.messageId = messageId;
     this.client.sendEvent(message, this.onResult.bind(this));

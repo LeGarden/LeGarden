@@ -38,7 +38,7 @@ async function main() {
     container
       .bind<IClientService>('IClientService')
       .toConstantValue(
-        new IotHubClientService(keys.iotHubConnectionstringTest, logger)
+        new IotHubClientService(keys.iotHubConnectionstringTest, logger, keys)
       );
 
     clientService = container.get<IClientService>('IClientService');
@@ -64,7 +64,7 @@ async function main() {
     container
       .bind<IClientService>('IClientService')
       .toConstantValue(
-        new IotHubClientService(keys.iotHubConnectionstring, logger)
+        new IotHubClientService(keys.iotHubConnectionstring, logger, keys)
       );
 
     clientService = container.get<IClientService>('IClientService');

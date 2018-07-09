@@ -4,5 +4,6 @@ export interface IEvent {
   subject: string;
   eventType: string;
   subjectId: string;
+  eventOccurrence?: Date;
   data: any;
 }
