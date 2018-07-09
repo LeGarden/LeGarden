@@ -148,13 +148,14 @@ export class LeGardenService {
     this.logger.info('act called with: ' + request.payload);
 
     const actor = this.actorRepo.get(request.payload.id);
+    let actorActionSuccessfull: boolean = false;
     if (actor) {
       switch (request.payload.state) {
         case 0:
-          this.deviceController.turnActorOff(actor);
+          actorActionSuccessfull = this.deviceController.turnActorOff(actor);
           break;
         case 1:
-          this.deviceController.turnActorOn(actor);
+          actorActionSuccessfull = this.deviceController.turnActorOn(actor);
           break;
         default:
           response.send(403, 'state allows the values 0 and 1.');
@@ -238,7 +239,7 @@ export class LeGardenService {
         this.networkController.connected().then((value2: boolean) => {
           if (value2 === true) {
             this.logger.info('reconnected to internet');
-            this.clientService.connect().then((value3:boolean) => {
+            this.clientService.connect().then((value3: boolean) => {
               this.logger.info('reconnected to iothub');
             });
           }

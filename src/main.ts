@@ -32,9 +32,7 @@ async function main() {
 
   let logger: ILogger;
   if (isPi() === false) {
-    container
-      .bind<ILogger>('ILogger')
-      .toConstantValue(new LocalLogger());
+    container.bind<ILogger>('ILogger').toConstantValue(new LocalLogger());
     logger = container.get<ILogger>('ILogger');
     logger.debug('using DebugContainer');
     container
@@ -52,7 +50,7 @@ async function main() {
     config = await configRepo.get();
     container
       .bind<IDeviceController>('IDeviceController')
-      .toConstantValue(new MockDeviceController(logger));
+      .toConstantValue(new MockDeviceController(logger, clientService));
     container
       .bind<INetworkController>('INetworkController')
       .toConstantValue(new MockNetworkController(logger));
@@ -80,7 +78,7 @@ async function main() {
     const module = await importRaspyDeviceContollerModule();
     container
       .bind<IDeviceController>('IDeviceController')
-      .toConstantValue(new module.RaspyDeviceContoller(logger));
+      .toConstantValue(new module.RaspyDeviceContoller(logger, clientService));
     container
       .bind<INetworkController>('INetworkController')
       .toConstantValue(new UmtsNetworkController(config.network, logger));

@@ -1,3 +1,5 @@
+// tslint:disable-next-line:no-var-requires
+const uuid = require('uuid');
 import {
   Client,
   DeviceMethodRequest,
@@ -8,6 +10,7 @@ import {
 import { Mqtt } from 'azure-iot-device-mqtt';
 import { Observable, Observer, Subject } from 'rxjs';
 import { IAction } from '../Domain/IAction';
+import { IEvent } from '../Domain/IEvent';
 import { IClientService } from './IClientService';
 import { ILogger } from './ILogger';
 
@@ -45,8 +48,12 @@ export class IotHubClientService implements IClientService {
     this.client.close(this.onDisconnect.bind(this));
   }
 
-  public sendEvent(data: any): void {
-    const message = new Message(data);
+  public sendEvent(data: IEvent): void {
+    const messageId = uuid.v4();
+    data.messageId = messageId;
+    data.deviceId = 'raspi@test';
+    const message = new Message(JSON.stringify(data));
+    message.messageId = messageId;
     this.client.sendEvent(message, this.onResult.bind(this));
   }
 
