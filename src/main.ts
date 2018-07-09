@@ -50,7 +50,7 @@ async function main() {
     config = await configRepo.get();
     container
       .bind<IDeviceController>('IDeviceController')
-      .toConstantValue(new MockDeviceController(logger, clientService));
+      .toConstantValue(new MockDeviceController(logger));
     container
       .bind<INetworkController>('INetworkController')
       .toConstantValue(new MockNetworkController(logger));

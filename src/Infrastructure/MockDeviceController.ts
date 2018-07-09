@@ -4,7 +4,7 @@ import { IDeviceController } from './IDeviceController';
 import { ILogger } from './ILogger';
 
 export class MockDeviceController implements IDeviceController {
-  constructor(private logger: ILogger, private clientService: IClientService) {}
+  constructor(private logger: ILogger) {}
 
   public turnActorOn(actor: IActor): boolean {
     actor.state = ActorState.On;
@@ -15,19 +15,6 @@ export class MockDeviceController implements IDeviceController {
       }
     }, 3600000);
 
-    this.clientService.sendEvent({
-      data: {
-        actor: {
-          id: actor.id,
-          name: actor.name,
-          state: actor.state,
-        },
-      },
-      eventType: 'On',
-      subject: 'Actor',
-      subjectId: actor.id,
-    });
-
     this.logger.info('Actor ' + actor.name + ' turned ' + actor.state);
     return true;
   }
@@ -37,19 +24,6 @@ export class MockDeviceController implements IDeviceController {
     if (actor.onCallback) {
       clearTimeout(actor.onCallback);
     }
-
-    this.clientService.sendEvent({
-      data: {
-        actor: {
-          id: actor.id,
-          name: actor.name,
-          state: actor.state,
-        },
-      },
-      eventType: 'Off',
-      subject: 'Actor',
-      subjectId: actor.id,
-    });
 
     this.logger.info('Actor ' + actor.name + ' turned ' + actor.state);
     return true;
