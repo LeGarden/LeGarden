@@ -16,7 +16,6 @@ import { ILogger } from './ILogger';
 
 export class IotHubClientService implements IClientService {
   public connectionStatus: boolean = false;
-  // public connectionState: Subject<boolean> = new Subject();
   public messages: Subject<IAction> = new Subject();
   private client: Client;
 
