@@ -22,12 +22,12 @@ export class LeGardenLogger implements ILogger {
       transports: [
         new transports.Console({
           format: format.combine(format.colorize(), format.simple()),
-          level: 'debug',
+          level: 'silly',
         }),
         new transports.File({
           filename: 'main.log',
           format: format.combine(format.timestamp(), fileformat),
-          level: 'debug',
+          level: 'silly',
         }),
       ],
     };
@@ -40,7 +40,9 @@ export class LeGardenLogger implements ILogger {
   }
 
   // tslint:disable-next-line:no-empty
-  public trace(msg: string): void {}
+  public trace(msg: string): void {
+    this.logger.silly(msg);
+  }
 
   public debug(msg: string): void {
     this.logger.debug(msg);

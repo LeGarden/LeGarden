@@ -26,6 +26,7 @@ export class UmtsNetworkController implements INetworkController {
           }
         });
       } catch (error) {
+        this.logger.error(error);
         resolve(false);
       }
     });

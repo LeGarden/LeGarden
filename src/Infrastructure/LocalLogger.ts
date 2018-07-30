@@ -15,8 +15,8 @@ export class LocalLogger implements ILogger {
       transports: [
         new transports.Console({
           format: format.combine(format.colorize(), format.simple()),
-          level: 'debug',
-          stderrLevels: ['error', 'debug', 'info', 'warn'],
+          level: 'silly',
+          stderrLevels: ['silly', 'error', 'debug', 'info', 'warn'],
         }),
       ],
     };
