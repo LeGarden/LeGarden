@@ -1,4 +1,4 @@
-import { lookup } from 'dns';
+import { resolve } from 'dns';
 import { exec, ExecResult } from 'ts-process-promises';
 import { ILogger } from './ILogger';
 import { INetworkController } from './INetworkController';
@@ -14,8 +14,8 @@ export class MockNetworkController implements INetworkController {
     await exec('node ./Wait3s.js')
       .on('process', (process: any) => this.logger.debug('Pid: ' + process.pid))
       .then(result => {
-        return new Promise<any>(resolve => {
-          resolve(result.stdout);
+        return new Promise<any>(res => {
+          res(result.stdout);
         });
       });
   }
@@ -33,15 +33,16 @@ export class MockNetworkController implements INetworkController {
   }
 
   public connected(): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
+    return new Promise<boolean>((res, reject) => {
       this.logger.trace('checking internet connection');
-      lookup('google.com', (err: any) => {
-        if (err && err.code === 'ENOTFOUND') {
+      resolve('google.com', (err: any) => {
+        this.logger.trace('error: ' + err);
+        if (err) {
           this.logger.debug('disconnected');
-          resolve(false);
+          res(false);
         } else {
           this.logger.trace('connected');
-          resolve(true);
+          res(true);
         }
       });
     });
