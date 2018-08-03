@@ -1,4 +1,4 @@
-import { lookup } from 'dns';
+import { resolve } from 'dns';
 import { exec, ExecResult } from 'ts-process-promises';
 import { INetworkConfiguration } from '../Domain/INetworkConfiguration';
 import { ILogger } from './ILogger';
@@ -12,23 +12,23 @@ export class UmtsNetworkController implements INetworkController {
   }
 
   public connected(): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
+    return new Promise<boolean>((res, reject) => {
       this.logger.trace('checking umts connection');
 
       try {
-        lookup('google.com', (err: any) => {
+        resolve('google.com', (err: any) => {
           this.logger.trace('error: ' + err);
-          if (err && err.code === 'ENOTFOUND') {
+          if (err) {
             this.logger.debug('disconnected');
-            resolve(false);
+            res(false);
           } else {
             this.logger.trace('connected');
-            resolve(true);
+            res(true);
           }
         });
       } catch (error) {
         this.logger.error(error);
-        resolve(false);
+        res(false);
       }
     });
   }
