@@ -17,8 +17,7 @@ export class UmtsNetworkController implements INetworkController {
 
       try {
         lookup('google.com', (err: any) => {
-          this.logger.debug('err=');
-          this.logger.debug(err);
+          this.logger.trace('error: ' + err);
           if (err && err.code === 'ENOTFOUND') {
             this.logger.debug('disconnected');
             resolve(false);
