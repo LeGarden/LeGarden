@@ -40,7 +40,7 @@ export class LeGardenService {
   }
 
   public async initialize(): Promise<any> {
-    const ret = await this.networkController.connect();
+    await this.networkController.connect();
     this.logger.debug('after network connect');
 
     await this.connectToIotHub();

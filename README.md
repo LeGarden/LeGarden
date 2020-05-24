@@ -1,11 +1,9 @@
-[![Build Status](https://travis-ci.org/{{github-user-name}}/{{github-app-name}}.svg?branch=master)](https://travis-ci.org/{{github-user-name}}/{{github-app-name}}.svg?branch=master)
-[![Coverage Status](https://coveralls.io/repos/github/{{github-user-name}}/{{github-app-name}}/badge.svg?branch=master)](https://coveralls.io/github/{{github-user-name}}/{{github-app-name}}?branch=master)
-[![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
+# LeGarden will is awesome 
 
-# LeGarden will be awesome 
+## Tasks
+## Get Logs form raspberry directly
+`~/node/LeGarden/lib $ tail -f main.log`
 
-
-## Setting travis and coveralls badges
-1. Sign in to [travis](https://travis-ci.org/) and activate the build for your project.
-2. Sign in to [coveralls](https://coveralls.io/) and activate the build for your project.
-3. Replace {{github-user-name}}/{{github-app-name}} with your repo details like: "ospatil/generator-node-typescript".
+## Renew IotHub SASToken
+1. Generate new Token with help of sastokengen.js in lib
+2. Replace token in [apim](https://portal.azure.com/#@bITglobal.onmicrosoft.com/resource/subscriptions/b28e7b7c-3fe4-4b4e-80cc-70003a9b399a/resourceGroups/LeGarden/providers/Microsoft.ApiManagement/service/LeGardenApiM/apim-apis)

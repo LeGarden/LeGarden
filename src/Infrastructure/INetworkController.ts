@@ -1,5 +1,5 @@
 export interface INetworkController {
-  connect(): void;
+  connect(): Promise<void>;
   disconnect(): void;
   connected(): Promise<boolean>;
 }

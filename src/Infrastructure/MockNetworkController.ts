@@ -36,8 +36,8 @@ export class MockNetworkController implements INetworkController {
     return new Promise<boolean>((res, reject) => {
       this.logger.trace('checking internet connection');
       resolve('google.com', (err: any) => {
-        this.logger.trace('error: ' + err);
         if (err) {
+          this.logger.warn('error: ' + err);
           this.logger.debug('disconnected');
           res(false);
         } else {
